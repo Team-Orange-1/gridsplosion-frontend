@@ -1,3 +1,23 @@
+# Gridsplosion Frontend Server
+
+**Author**: [Miguel Rodriguez](https://github.com/m11gz), [David Tusia](https://github.com/dftjr), [Brooke Heck](https://github.com/BrookeHeck)
+
+**Version**: 1.0.0 
+
+## Overview
+
+
+## Getting Started
+
+
+## Architecture
+
+
+## Change Log
+
+
+
+</br></br></br>
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
