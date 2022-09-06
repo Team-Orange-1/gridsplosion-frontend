@@ -37,13 +37,6 @@ class Main extends React.Component {
     }, 1000)
   }
 
-  // loop through permanent blocks and make sure the coordinate does not land on a permanent block
-  checkForPermanentBlocks(x, y) {
-    return this.state.blockCoordinates.every(coord => {
-      return !(y / 2 === coord[0] && x / 2 === coord[1]);
-    });
-  }
-
   // make sure the the destructible block doesn't land on a player, also make sure the player isn't trapped by destructible blocks
   checkIfPlayer(x, y) {
     let checkPlayer = (y === 0) && (x === 0);
@@ -54,9 +47,9 @@ class Main extends React.Component {
 
   // get original destructible blocks
   getBlockCoordinates() {
-    let coordArr = [1, 2, 3, 4, 5];
+    let coordArr = [];
     
-    while (coordArr.length < 5) {
+    while (coordArr.length < 9) {
       // generate two random numbers within the 12 by 12 grid
       let x = Math.floor(Math.random() * 12);
       let y = Math.floor(Math.random() * 12);
@@ -65,11 +58,17 @@ class Main extends React.Component {
       // true means player is there, false means player is not there and will not be trapped by block
 
       // check if the generated coordinate is the same as any of the permanent blocks
+      // checkForPermanentBlocks returns false if there is a permanent block at that coordinate
+      let noPermanentBlocks = this.checkBlock(x*2,y*2);
+      if(noPermanentBlocks) coordArr.push([x, y]);
+      this.setState({destructibleBlocks: coordArr});
     }
   }
 
+  // this function is used to check for permanent blocks when player tries to move
+  // also used when generating destructible blocks
   checkBlock(x, y) {
-    let noBlock = this.blockCoordinates.every(block => {
+    let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks].every(block => {
       return !(y / 2 === block[0] && x / 2 === block[1]);
     });
     return noBlock;
@@ -110,6 +109,22 @@ class Main extends React.Component {
     }
   }
 
+  // should drop a bomb at players current interval and start a timer for when it goes off
+  dropBomb() {
+
+  }
+
+  // when timer goes off, check for destructible blocks, enemies, and player in bomb radius 
+  explosion() {
+
+  }
+
+  // start AI with component did mount
+  // use an interval to change the x and y coordinates of the AI
+  startEnemyAI() {
+
+  }
+
   // event handler, moves player depending on the key pressed
   handleKeyPress(e) {
     let keyPressed = e.key;
@@ -122,6 +137,8 @@ class Main extends React.Component {
         break;
       case (keyPressed === 's' || keyPressed === 'ArrowDown'): this.moveDown();
         break;
+      case keyPressed === ' ' : this.dropBomb();
+      break;
       default: console.log(keyPressed);
     }
   }
@@ -135,6 +152,7 @@ class Main extends React.Component {
           <GameCanvas
             playerCoordinate={this.state.playerCoordinate}
             blockCoordinates={this.blockCoordinates}
+            destructibleBlocks={this.state.destructibleBlocks}
           />}
       </>
     )
