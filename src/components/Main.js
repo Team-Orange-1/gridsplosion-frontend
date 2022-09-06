@@ -8,14 +8,15 @@ class Main extends React.Component {
       playerCoordinate: [0, 0],
       destructibleBlocks: [],
       countdown: 5,
+      bombCoordinates: []
     }
   }
 
   blockCoordinates = [
     [1, 1], [1, 2], [2, 1], [2, 2], [0, 5], [0, 6], [1, 9], [1, 10], [2, 4], [2, 7], [2, 9], [2, 10],
     [3, 5], [3, 6], [4, 5], [4, 6], [5, 0], [6, 0], [5, 3], [6, 2], [6, 3], [5, 8], [5, 9], [6, 8],
-    [5, 11], [6, 11], [7, 5], [7, 6], [8, 5], [8, 6], [9, 1], [9, 2], [9, 4], [9, 7], [9, 9], [9,10],
-    [10,1], [10, 2], [10, 9], [10, 10], [11, 5], [11, 6]
+    [5, 11], [6, 11], [7, 5], [7, 6], [8, 5], [8, 6], [9, 1], [9, 2], [9, 4], [9, 7], [9, 9], [9, 10],
+    [10, 1], [10, 2], [10, 9], [10, 10], [11, 5], [11, 6]
   ];
 
   // when page loads, add the event listener, get block coordinates and start the timer
@@ -41,32 +42,30 @@ class Main extends React.Component {
   checkIfPlayer(x, y) {
     let checkPlayer = (y === 0) && (x === 0);
     let trappedXDirection = (y === 0 && x === 1) || (y === 0 && x === 2) || (y === 0 && x === 3);
-    let trappedYDirection = (y === 1 && x === 0) || (y === 2 && x === 0) || (y === 3 && x === 0); 
+    let trappedYDirection = (y === 1 && x === 0) || (y === 2 && x === 0) || (y === 3 && x === 0);
     return (checkPlayer || trappedXDirection || trappedYDirection);
   }
 
   // get original destructible blocks
   getBlockCoordinates() {
     let coordArr = [];
-    
+
     while (coordArr.length < 9) {
       // generate two random numbers within the 12 by 12 grid
       let x = Math.floor(Math.random() * 12);
       let y = Math.floor(Math.random() * 12);
 
-      // check if player is where destructible block might be
-      // true means player is there, false means player is not there and will not be trapped by block
-
       // check if the generated coordinate is the same as any of the permanent blocks
       // checkForPermanentBlocks returns false if there is a permanent block at that coordinate
-      let noPermanentBlocks = this.checkBlock(x*2,y*2);
-      if(noPermanentBlocks) coordArr.push([x, y]);
-      this.setState({destructibleBlocks: coordArr});
+      let noPermanentBlocks = this.checkBlock(x * 2, y * 2);
+      if (noPermanentBlocks) coordArr.push([x, y]);
+      this.setState({ destructibleBlocks: coordArr });
     }
   }
 
   // this function is used to check for permanent blocks when player tries to move
   // also used when generating destructible blocks
+  // also used to check if there is blocks in the bomb radius
   checkBlock(x, y) {
     let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks].every(block => {
       return !(y / 2 === block[0] && x / 2 === block[1]);
@@ -111,12 +110,27 @@ class Main extends React.Component {
 
   // should drop a bomb at players current interval and start a timer for when it goes off
   dropBomb() {
-
+    let bombArr = this.state.bombCoordinates;
+    // get the coordinate of the player and see if a bomb has already been dropped there
+    let newCoord = ([this.state.playerCoordinate[1] / 2, this.state.playerCoordinate[0] / 2]);
+    let duplicate = bombArr.some(coord => newCoord[0] === coord[0] && newCoord[1] === coord[1]);
+    // if less than five bombs dropped and not a duplicate, add bomb to coordinate array
+    if (this.state.bombCoordinates.length < 5 && !duplicate) {
+      let bombArr = this.state.bombCoordinates;
+      bombArr.push(newCoord);
+      this.setState({ bombCoordinates: bombArr });
+    }
+    this.explosion();
   }
 
   // when timer goes off, check for destructible blocks, enemies, and player in bomb radius 
   explosion() {
-
+    console.log(this.state);
+    let temp = this.state.bombCoordinates;
+    setTimeout(() => {
+      temp.shift();
+    }, 3000);
+    this.setState({ bombCoordinates: temp });
   }
 
   // start AI with component did mount
@@ -137,8 +151,8 @@ class Main extends React.Component {
         break;
       case (keyPressed === 's' || keyPressed === 'ArrowDown'): this.moveDown();
         break;
-      case keyPressed === ' ' : this.dropBomb();
-      break;
+      case keyPressed === ' ': this.dropBomb();
+        break;
       default: console.log(keyPressed);
     }
   }
@@ -153,6 +167,7 @@ class Main extends React.Component {
             playerCoordinate={this.state.playerCoordinate}
             blockCoordinates={this.blockCoordinates}
             destructibleBlocks={this.state.destructibleBlocks}
+            bombCoordinates={this.state.bombCoordinates}
           />}
       </>
     )
