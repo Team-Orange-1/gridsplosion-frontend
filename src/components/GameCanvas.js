@@ -28,10 +28,16 @@ const GameCanvas = props => {
       context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
     });
 
+    // fills the canvas in purple wherever the destructible blocks are
+    props.destructibleBlocks.forEach(coord => {
+      context.fillStyle = 'purple';
+      context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
+    });
+
     // fills the canvas in where the player is
     context.fillStyle = 'blue';
     context.fillRect(props.playerCoordinate[0]/2 * blockSize, props.playerCoordinate[1]/2 * blockSize, blockSize, blockSize);
-  }, [props.playerCoordinate, props.blockCoordinates]);
+  }, [props.playerCoordinate, props.blockCoordinates, props.destructibleBlocks]);
   
   return <canvas ref={canvasRef} width='600px' height='600px'/>
 }
