@@ -26,7 +26,7 @@ const GameCanvas = props => {
     });
 
     context.fillStyle = 'blue';
-    context.fillRect(props.playerCoordinate[0] * blockSize/2, props.playerCoordinate[1] * blockSize/2, blockSize, blockSize);
+    context.fillRect(props.playerCoordinate[0]/2 * blockSize, props.playerCoordinate[1]/2 * blockSize, blockSize, blockSize);
   }, [props.playerCoordinate, props.blockCoordinates]);
   
   return <canvas ref={canvasRef} width='600px' height='600px'/>
