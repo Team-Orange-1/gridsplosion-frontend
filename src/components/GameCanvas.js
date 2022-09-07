@@ -28,23 +28,26 @@ const GameCanvas = props => {
       context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
     });
 
+    // fills the canvas in to show radius
+    props.radius.forEach(coordArr => {
+      coordArr.forEach(coord => {
+        context.fillStyle = '#ffbebe';
+        context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
+      });
+    });
+
     // fills the canvas in purple wherever the destructible blocks are
     props.destructibleBlocks.forEach(coord => {
       context.fillStyle = 'purple';
       context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
     });
 
+
+    // fills the canvas red wherever a bomb is dropped
     props.bombCoordinates.forEach(coord => {
       context.fillStyle = 'red';
       context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
     });
-    // console.log(props.radius);
-    // props.radius.forEach(coordArr => {
-    //   coordArr.forEach(coord => {
-    //     context.fillStyle = '#ffbebe';
-    //     context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
-    //   })
-    // })
 
     // fills the canvas in where the player is
     context.fillStyle = 'blue';

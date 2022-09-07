@@ -9,11 +9,12 @@ class Main extends React.Component {
       destructibleBlocks: [],
       countdown: 5,
       bombCoordinates: [],
-      radius: []
+      radius: [],
+      gameOver: false
     }
   }
 
-  // coordinates for the 
+  // coordinates for the permanent orange blocks
   blockCoordinates = [
     [1, 1], [1, 2], [2, 1], [2, 2], [0, 5], [0, 6], [1, 9], [1, 10], [2, 4], [2, 7], [2, 9], [2, 10],
     [3, 5], [3, 6], [4, 5], [4, 6], [5, 0], [6, 0], [5, 3], [6, 2], [6, 3], [5, 8], [5, 9], [6, 8],
@@ -44,14 +45,14 @@ class Main extends React.Component {
   getBlockCoordinates() {
     let coordArr = [];
 
-    while (coordArr.length < 9) {
+    while (coordArr.length < 10) {
       // generate two random numbers within the 12 by 12 grid
       let x = Math.floor(Math.random() * 12);
       let y = Math.floor(Math.random() * 12);
 
       // check if the generated coordinate is the same as any of the permanent blocks
       // checkForPermanentBlocks returns false if there is a permanent block at that coordinate
-      let noPermanentBlocks = this.checkBlock(x * 2, y * 2);
+      let noPermanentBlocks = this.checkBlock(y * 2, x * 2);
       if (noPermanentBlocks) coordArr.push([x, y]);
       this.setState({ destructibleBlocks: coordArr });
     }
@@ -102,36 +103,67 @@ class Main extends React.Component {
     }
   }
 
-  // should drop a bomb at players current interval and start a timer for when it goes off
+  /*
+  DROP BOMB
+  1. remove the bomb coordinates to array
+  2. call getRadius to get the bomb radius and add it to array
+  3. start the timer for when bomb will explode by calling explosion
+  */  
   dropBomb() {
     let bombArr = this.state.bombCoordinates;
     // get the coordinate of the player and see if a bomb has already been dropped there
     let newCoord = ([this.state.playerCoordinate[1] / 2, this.state.playerCoordinate[0] / 2]);
     let duplicate = bombArr.some(coord => newCoord[0] === coord[0] && newCoord[1] === coord[1]);
+
     // if less than five bombs dropped and not a duplicate, add bomb to coordinate array
+    // get bomb radius and then start the timer by calling explosion
     if (this.state.bombCoordinates.length < 5 && !duplicate) {
       let bombArr = this.state.bombCoordinates;
       bombArr.push(newCoord);
-      this.setState({ bombCoordinates: bombArr }, this.explosion);
+      this.setState({ bombCoordinates: bombArr });
 
       let radiusArr = this.state.radius;
       radiusArr.push(this.getRadius(newCoord));
-      this.setState({radius: radiusArr});
+      this.setState({radius: radiusArr}, , this.explosion);
     }
   }
 
-  // when timer goes off, check for destructible blocks, enemies, and player in bomb radius 
+  /*
+  BOMB EXPLODES
+  1. check for killed player
+  2. check for killed enemy
+  3. remove any destructible blocks
+  4. remove the bomb from array, remove radius from array
+  */  
   explosion() {
-    let temp = this.state.bombCoordinates;
+    let tempBombs = this.state.bombCoordinates;
+    let tempRadius = this.state.radius;
     setTimeout(() => {
-      temp.shift();
-      this.setState({ bombCoordinates: temp });
+      tempBombs.shift();
+      this.setState({ bombCoordinates: tempBombs });
+
+      tempRadius.shift();
+      this.setState({ radius: tempRadius});
     }, 5000);
   }
 
-  // determine the radius of the bomb, and check what is in that radius
+  // determine the radius of the bomb, filter out indestructible blocks
   getRadius(coord) {
-    return [[coord[1]+1, coord[0]], [coord[1]+2, coord[0]], [coord[1]-1, coord[0]], [coord[1]-2, coord[0]], [coord[1], coord[0]+1], [coord[1], coord[0]+2], [coord[1], coord[0]-1], [coord[1], coord[0]-2]];
+    let fullRadius = [[coord[0]+1, coord[1]], [coord[0]+2, coord[1]], [coord[0]-1, coord[1]], [coord[0]-2, coord[1]], [coord[0], coord[1]+1], [coord[0], coord[1]+2], [coord[0], coord[1]-1], [coord[0], coord[1]-2]];
+
+    let filteredRadius = fullRadius.filter(coord => {
+      return this.blockCoordinates.every(block => {
+        return !(coord[0]  === block[0] && coord[1] === block[1]);
+      });
+    });
+    return filteredRadius;
+  }
+
+  // determines if the player is in the bomb radius
+  bombKillsPlayer(radiusArr) {
+    let gameOver = radiusArr.every(coord => {
+      
+    })
   }
 
   // event handler, moves player depending on the key pressed

@@ -13,13 +13,13 @@ root.render(
   </React.StrictMode>
 );
 
-ReactDOM.render(
-  <Auth0Provider
-    domain={process.env.REACT_APP_AUTH_DOMAIN}
-    clientId={process.env.REACT_APP_AUTH_CLIENT_ID}
-    redirectUri={process.env.REACT_APP_AUTH_REDIRECT_URI}
-  >
-    <App />
-    </Auth0Provider>,
-  document.getElementById('root')
-);
+// ReactDOM.render(
+//   <Auth0Provider
+//     domain={process.env.REACT_APP_AUTH_DOMAIN}
+//     clientId={process.env.REACT_APP_AUTH_CLIENT_ID}
+//     redirectUri={process.env.REACT_APP_AUTH_REDIRECT_URI}
+//   >
+//     <App />
+//     </Auth0Provider>,
+//   document.getElementById('root')
+// );
