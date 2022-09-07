@@ -8,14 +8,18 @@ class Main extends React.Component {
       playerCoordinate: [0, 0],
       destructibleBlocks: [],
       countdown: 5,
+      bombCoordinates: [],
+      radius: [],
+      gameOver: false
     }
   }
 
+  // coordinates for the permanent orange blocks
   blockCoordinates = [
     [1, 1], [1, 2], [2, 1], [2, 2], [0, 5], [0, 6], [1, 9], [1, 10], [2, 4], [2, 7], [2, 9], [2, 10],
     [3, 5], [3, 6], [4, 5], [4, 6], [5, 0], [6, 0], [5, 3], [6, 2], [6, 3], [5, 8], [5, 9], [6, 8],
-    [5, 11], [6, 11], [7, 5], [7, 6], [8, 5], [8, 6], [9, 1], [9, 2], [9, 4], [9, 7], [9, 9], [9,10],
-    [10,1], [10, 2], [10, 9], [10, 10], [11, 5], [11, 6]
+    [5, 11], [6, 11], [7, 5], [7, 6], [8, 5], [8, 6], [9, 1], [9, 2], [9, 4], [9, 7], [9, 9], [9, 10],
+    [10, 1], [10, 2], [10, 9], [10, 10], [11, 5], [11, 6]
   ];
 
   // when page loads, add the event listener, get block coordinates and start the timer
@@ -37,36 +41,26 @@ class Main extends React.Component {
     }, 1000)
   }
 
-  // make sure the the destructible block doesn't land on a player, also make sure the player isn't trapped by destructible blocks
-  checkIfPlayer(x, y) {
-    let checkPlayer = (y === 0) && (x === 0);
-    let trappedXDirection = (y === 0 && x === 1) || (y === 0 && x === 2) || (y === 0 && x === 3);
-    let trappedYDirection = (y === 1 && x === 0) || (y === 2 && x === 0) || (y === 3 && x === 0); 
-    return (checkPlayer || trappedXDirection || trappedYDirection);
-  }
-
   // get original destructible blocks
   getBlockCoordinates() {
     let coordArr = [];
-    
-    while (coordArr.length < 9) {
+
+    while (coordArr.length < 10) {
       // generate two random numbers within the 12 by 12 grid
       let x = Math.floor(Math.random() * 12);
       let y = Math.floor(Math.random() * 12);
 
-      // check if player is where destructible block might be
-      // true means player is there, false means player is not there and will not be trapped by block
-
       // check if the generated coordinate is the same as any of the permanent blocks
       // checkForPermanentBlocks returns false if there is a permanent block at that coordinate
-      let noPermanentBlocks = this.checkBlock(x*2,y*2);
-      if(noPermanentBlocks) coordArr.push([x, y]);
-      this.setState({destructibleBlocks: coordArr});
+      let noPermanentBlocks = this.checkBlock(y * 2, x * 2);
+      if (noPermanentBlocks) coordArr.push([x, y]);
+      this.setState({ destructibleBlocks: coordArr });
     }
   }
 
   // this function is used to check for permanent blocks when player tries to move
   // also used when generating destructible blocks
+  // also used to check if there is blocks in the bomb radius
   checkBlock(x, y) {
     let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks].every(block => {
       return !(y / 2 === block[0] && x / 2 === block[1]);
@@ -109,21 +103,94 @@ class Main extends React.Component {
     }
   }
 
-  // should drop a bomb at players current interval and start a timer for when it goes off
+  /*
+  DROP BOMB
+  1. remove the bomb coordinates to array
+  2. call getRadius to get the bomb radius and add it to array
+  3. start the timer for when bomb will explode by calling explosion
+  */  
   dropBomb() {
+    let bombArr = this.state.bombCoordinates;
+    // get the coordinate of the player and see if a bomb has already been dropped there
+    let newCoord = ([this.state.playerCoordinate[1] / 2, this.state.playerCoordinate[0] / 2]);
+    let duplicate = bombArr.some(coord => newCoord[0] === coord[0] && newCoord[1] === coord[1]);
 
+    // if less than five bombs dropped and not a duplicate, add bomb to coordinate array
+    // get bomb radius and then start the timer by calling explosion
+    if (this.state.bombCoordinates.length < 5 && !duplicate) {
+      let bombArr = this.state.bombCoordinates;
+      bombArr.push(newCoord);
+      this.setState({ bombCoordinates: bombArr });
+
+      let radiusArr = this.state.radius;
+      radiusArr.push(this.getRadius(newCoord));
+      this.setState({radius: radiusArr}, this.explosion);
+    }
   }
 
-  // when timer goes off, check for destructible blocks, enemies, and player in bomb radius 
+  /*
+  BOMB EXPLODES
+  1. check for killed player
+  2. check for killed enemy
+  3. remove any destructible blocks
+  4. remove the bomb from array, remove radius from array
+  */  
   explosion() {
+    let tempBombs = this.state.bombCoordinates;
+    let tempRadius = this.state.radius;
+    setTimeout(() => {
+      this.bombKillsPlayer(tempRadius[0]);
 
+      this.removeBlocksInRadius(tempRadius[0]);
+
+      tempBombs.shift();
+      this.setState({ bombCoordinates: tempBombs });
+
+      tempRadius.shift();
+      this.setState({ radius: tempRadius});
+    }, 5000);
   }
 
-  // start AI with component did mount
-  // use an interval to change the x and y coordinates of the AI
-  startEnemyAI() {
+  // determine the radius of the bomb, filter out indestructible blocks
+  getRadius(coord) {
+    let fullRadius = [[coord[0]+1, coord[1]], [coord[0]+2, coord[1]], [coord[0]-1, coord[1]], [coord[0]-2, coord[1]], [coord[0], coord[1]+1], [coord[0], coord[1]+2], [coord[0], coord[1]-1], [coord[0], coord[1]-2]];
 
+    let filteredRadius = fullRadius.filter(coord => {
+      return this.blockCoordinates.every(block => {
+        return !(coord[0]  === block[0] && coord[1] === block[1]);
+      });
+    });
+    return filteredRadius;
   }
+
+  // determines if the player is in the bomb radius
+  bombKillsPlayer(radiusArr) {
+    let playerCoord = this.state.playerCoordinate;
+    let playerKilled = radiusArr.find(blockCoord => {
+      return blockCoord[1] === playerCoord[0]/2 && blockCoord[0] === playerCoord[1]/2;
+    }) ? true : false;
+    this.setState({gameOver: playerKilled}, () => console.log(this.state.gameOver));
+  }
+
+  // determines if destructible blocks are in radius
+  removeBlocksInRadius(radiusArr) {
+    // find the destructible blocks in the radius
+    let removeArr = radiusArr.filter(coord => {
+      return !this.state.destructibleBlocks.every(block => {
+        return !(coord[0]  === block[0] && coord[1] === block[1]);
+      });
+    });
+
+    // remove the blocks in the radius from the destructible blocks array
+    let destructibleBlockArr = this.state.destructibleBlocks;
+    let filteredArr = destructibleBlockArr.filter(coord => {
+      return removeArr.every(block => {
+        return !(coord[0]  === block[0] && coord[1] === block[1]);
+      });
+    });
+    // remove the blocks by setting state to filtered array 
+    this.setState({destructibleBlocks: filteredArr});
+  };
 
   // event handler, moves player depending on the key pressed
   handleKeyPress(e) {
@@ -137,8 +204,8 @@ class Main extends React.Component {
         break;
       case (keyPressed === 's' || keyPressed === 'ArrowDown'): this.moveDown();
         break;
-      case keyPressed === ' ' : this.dropBomb();
-      break;
+      case keyPressed === ' ': this.dropBomb();
+        break;
       default: console.log(keyPressed);
     }
   }
@@ -153,6 +220,8 @@ class Main extends React.Component {
             playerCoordinate={this.state.playerCoordinate}
             blockCoordinates={this.blockCoordinates}
             destructibleBlocks={this.state.destructibleBlocks}
+            bombCoordinates={this.state.bombCoordinates}
+            radius={this.state.radius}
           />}
       </>
     )
