@@ -7,30 +7,31 @@ import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
 import Content from './Content';
 
-// function App() {
-//   return (
-//     <>
-//       <Main/>
-//     </>
-//   );
-// }
-class App extends React.Component {
-  render() {
-    return (
-      <>
-          <h1>new</h1>
-          {this.props.auth0.isAuthenticated
-            ? <LogoutButton/>
-            : <LoginButton/>
-          }
-          {this.props.auth0.isAuthenticated
-            ? <Content/>
-            : <h2>Please log in</h2>
-          }
-        </>
-      )
-    }
-  }
+function App() {
+  return (
+    <>
+      <Main/>
+    </>
+  );
+}
+export default App;
+// class App extends React.Component {
+//   render() {
+//     return (
+//       <>
+//           <h1>new</h1>
+//           {this.props.auth0.isAuthenticated
+//             ? <LogoutButton/>
+//             : <LoginButton/>
+//           }
+//           {this.props.auth0.isAuthenticated
+//             ? <Content/>
+//             : <h2>Please log in</h2>
+//           }
+//         </>
+//       )
+//     }
+//   }
   
   // useAuth0 — is for functional components
   // withAuth0 — is for class components
@@ -38,6 +39,6 @@ class App extends React.Component {
   // let SERVER = process.env.REACT_APP_SERVER; 
 
 
-export default withAuth0 (App);
+// export default withAuth0 (App);
 
 

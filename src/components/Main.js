@@ -124,7 +124,7 @@ class Main extends React.Component {
 
       let radiusArr = this.state.radius;
       radiusArr.push(this.getRadius(newCoord));
-      this.setState({radius: radiusArr}, , this.explosion);
+      this.setState({radius: radiusArr}, this.explosion);
     }
   }
 
@@ -139,6 +139,10 @@ class Main extends React.Component {
     let tempBombs = this.state.bombCoordinates;
     let tempRadius = this.state.radius;
     setTimeout(() => {
+      this.bombKillsPlayer(tempRadius[0]);
+
+      this.removeBlocksInRadius(tempRadius[0]);
+
       tempBombs.shift();
       this.setState({ bombCoordinates: tempBombs });
 
@@ -161,10 +165,32 @@ class Main extends React.Component {
 
   // determines if the player is in the bomb radius
   bombKillsPlayer(radiusArr) {
-    let gameOver = radiusArr.every(coord => {
-      
-    })
+    let playerCoord = this.state.playerCoordinate;
+    let playerKilled = radiusArr.find(blockCoord => {
+      return blockCoord[1] === playerCoord[0]/2 && blockCoord[0] === playerCoord[1]/2;
+    }) ? true : false;
+    this.setState({gameOver: playerKilled}, () => console.log(this.state.gameOver));
   }
+
+  // determines if destructible blocks are in radius
+  removeBlocksInRadius(radiusArr) {
+    // find the destructible blocks in the radius
+    let removeArr = radiusArr.filter(coord => {
+      return !this.state.destructibleBlocks.every(block => {
+        return !(coord[0]  === block[0] && coord[1] === block[1]);
+      });
+    });
+
+    // remove the blocks in the radius from the destructible blocks array
+    let destructibleBlockArr = this.state.destructibleBlocks;
+    let filteredArr = destructibleBlockArr.filter(coord => {
+      return removeArr.every(block => {
+        return !(coord[0]  === block[0] && coord[1] === block[1]);
+      });
+    });
+    // remove the blocks by setting state to filtered array 
+    this.setState({destructibleBlocks: filteredArr});
+  };
 
   // event handler, moves player depending on the key pressed
   handleKeyPress(e) {
