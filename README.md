@@ -17,4 +17,4 @@
 
 ![Screenshot1](src/images/1.PNG "UML")
 
-![Screenshot2](src/images/2.PNG "User Stories")
+![Screenshot2](src/images/2.PNG "Users Stories")
