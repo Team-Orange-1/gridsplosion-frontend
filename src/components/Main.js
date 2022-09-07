@@ -141,4 +141,59 @@ class Main extends React.Component {
   }
 }
 
+// render() {
+//   return (
+//   <Modal
+//     show={this.props.show}
+//     onHide={this.props.onHide}
+//   >
+//     <Container>
+//       <Card className="booksDisplay">
+//         <Form onSubmit={this.handleBookEditSubmit}>
+//           <Form.Group controlId="title">
+//             <Form.Label>Title</Form.Label>
+//             <Form.Control placeholder="Enter a book title"
+//               type="text"
+//               input="title"
+//               onInput={this.handleTitleInput}
+//               defaultValue={this.props.book.title}
+//             />
+//           </Form.Group>
+
+//           <Form.Group controlId="description">
+//             <Form.Label>Description</Form.Label>
+//             <Form.Control placeholder="Enter a brief description"
+//               type="text"
+//               input="description"
+//               onInput={this.handleDescriptionInput}
+//               defaultValue={this.props.book.description}
+//             />
+//           </Form.Group>
+
+//           <Form.Group controlId="status">
+//             <Form.Label>Status</Form.Label>
+//             <Form.Control placeholder="Enter a status description"
+//               type="text"
+//               input="status"
+//               onInput={this.handleStatusInput}
+//               defaultValue={this.props.book.status}
+//             />
+//           </Form.Group>
+
+//           <Button
+//             disabled={this.state.title.length < 1 || this.state.description.length < 1 || this.state.status.length < 1}
+//             type="submit">
+//             Complete Edit
+//           </Button>
+//         </Form>
+//       </Card>
+//     </Container>
+//   </Modal>
+// )
+// }
+
+
+
+
+
 export default Main;

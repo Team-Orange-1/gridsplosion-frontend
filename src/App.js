@@ -7,13 +7,6 @@ import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
 import Content from './Content';
 
-// function App() {
-//   return (
-//     <>
-//       <Main/>
-//     </>
-//   );
-// }
 class App extends React.Component {
   render() {
     return (
@@ -24,7 +17,7 @@ class App extends React.Component {
             : <LoginButton/>
           }
           {this.props.auth0.isAuthenticated
-            ? <Content/>
+            ? <><Profile/> <Main/></> 
             : <h2>Please log in</h2>
           }
         </>
