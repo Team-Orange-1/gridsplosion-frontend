@@ -6,7 +6,7 @@ class Main extends React.Component {
     super(props);
     this.state = {
       playerCoordinate: [0, 0],
-      enemyCoordinates:[[0,22], [22,0],[22,22]],
+      enemyCoordinates:[[0,22], [22, 0], [22, 22]],
       // enemy1Coordinate: [0, 22],
       // enemy2Coordinate: [22, 0],
       // enemy3Coordinate: [22, 22],
@@ -31,7 +31,7 @@ class Main extends React.Component {
     document.addEventListener('keydown', (e) => { this.handleKeyPress(e) });
     this.getBlockCoordinates();
     this.startTimer();
-    setInterval( () => this.getMove(), 2000);
+    setInterval( () => this.getMove(), 4000);
   }
 
   componentWillUnmount() {
@@ -68,6 +68,7 @@ class Main extends React.Component {
   // also used to check if there is blocks in the bomb radius
   checkBlock(x, y) {
     let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks, ...this.state.bombCoordinates].every(block => {
+      // console.log(`(${x}, ${y}) : ${block[1]}, ${block[0]}`);
       return !(y / 2 === block[0] && x / 2 === block[1]);
     });
     return noBlock;
@@ -78,7 +79,7 @@ class Main extends React.Component {
 
   // increment the player coordinate one in the x direction if it will not go outside the boundary
   moveRight() {
-    let newCoordinate = [this.state.playerCoordinate[0] + 1, Math.ceil(this.state.playerCoordinate[1])];
+    let newCoordinate = [this.state.playerCoordinate[0] + 1, this.state.playerCoordinate[1]];
     if (this.state.playerCoordinate[0] < 22 && this.checkBlock(newCoordinate[0] + 1, newCoordinate[1])) {
       this.setState({ playerCoordinate: newCoordinate });
     }
@@ -180,6 +181,8 @@ class Main extends React.Component {
     this.setState({gameOver: playerKilled}, () => console.log(this.state.gameOver));
   }
 
+  // this function loops through the radius array and finds an enemies in the radius
+  // returned array is used in removeKilledEnemy
   bombKillsEnemy(radiusArr) {
     let enemyCoords = this.state.enemyCoordinates;
     let enemiesKilled = [];
@@ -192,6 +195,7 @@ class Main extends React.Component {
     return enemiesKilled;
   }
 
+  // takes the enemies to kill array from bombKillsEnemy and removes them from the enemy coordinates array in state
   removeKilledEnemy(enemiesKilled) {
     console.log(enemiesKilled);
     let enemyArr = this.state.enemyCoordinates;
@@ -245,11 +249,9 @@ class Main extends React.Component {
 
 
   // AI Movement
-  // Enemy1 movement
-
   moveRightAi(coords) {
     let newCoordinate = [coords[0] + 2, Math.ceil(coords[1])];
-    if (coords[0] < 22 && this.checkBlock(newCoordinate[1], newCoordinate[0] + 2)) {
+    if (coords[0] < 22 && this.checkBlock((newCoordinate[1], newCoordinate[0] + 2))) {
       return newCoordinate;
     } else {
       return coords;
@@ -259,7 +261,7 @@ class Main extends React.Component {
   // decrement the player coordinate one in the x direction if it will not go outside the boundary
   moveLeftAi(coords) {
     let newCoordinate = [coords[0] - 2, coords[1]];
-    if (coords[0] > 0 && this.checkBlock(newCoordinate[1], newCoordinate[0] - 2)) {
+    if (coords[0] > 0 && this.checkBlock((newCoordinate[0] - 1), newCoordinate[1])) {
       return newCoordinate;
     } else {
       return coords;
@@ -269,7 +271,7 @@ class Main extends React.Component {
   // decrement the player coordinate one in the y direction if it will not go outside the boundary
   moveUpAi(coords) {
     let newCoordinate = [coords[0], coords[1] - 2];
-    if (coords[1] > .1 && this.checkBlock(newCoordinate[1] - 2, newCoordinate[0])) {
+    if (coords[1] > .1 && this.checkBlock(newCoordinate[0], newCoordinate[1] - 2)) {
       return newCoordinate;
     } else {
       return coords;
@@ -279,7 +281,7 @@ class Main extends React.Component {
   // increment the player coordinate one in the y direction if it will not go outside the boundary
   moveDownAi(coords) {
     let newCoordinate = [coords[0], coords[1] + 2];
-    if (coords[1] < 22 && this.checkBlock(newCoordinate[1] + 2, newCoordinate[0])) {
+    if (coords[1] < 22 && this.checkBlock(newCoordinate[0], newCoordinate[1] + 2)) {
       return newCoordinate;
     } else {
       return coords;
@@ -301,12 +303,8 @@ class Main extends React.Component {
   }
 
   getMove() {
-    // let move1 = this.moveYourselfAi(this.state.enemy1Coordinate);
-    // let move2 = this.moveYourselfAi(this.state.enemy2Coordinate);
-    // let move3 = this.moveYourselfAi(this.state.enemy3Coordinate);
-
     let newCoordArr = this.state.enemyCoordinates.map(enemy => this.moveYourselfAi(enemy));
-    
+    // console.log(newCoordArr[0], newCoordArr[1]);
     this.setState({enemyCoordinates: newCoordArr});
   }
 
