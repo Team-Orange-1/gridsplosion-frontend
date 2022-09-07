@@ -6,6 +6,10 @@ class Main extends React.Component {
     super(props);
     this.state = {
       playerCoordinate: [0, 0],
+      enemyCoordinates:[[0,22], [22,0],[22,22]],
+      // enemy1Coordinate: [0, 22],
+      // enemy2Coordinate: [22, 0],
+      // enemy3Coordinate: [22, 22],
       destructibleBlocks: [],
       countdown: 5,
       bombCoordinates: [],
@@ -27,6 +31,7 @@ class Main extends React.Component {
     document.addEventListener('keydown', (e) => { this.handleKeyPress(e) });
     this.getBlockCoordinates();
     this.startTimer();
+    setInterval( () => this.getMove(), 2000);
   }
 
   componentWillUnmount() {
@@ -62,7 +67,7 @@ class Main extends React.Component {
   // also used when generating destructible blocks
   // also used to check if there is blocks in the bomb radius
   checkBlock(x, y) {
-    let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks].every(block => {
+    let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks, ...this.state.bombCoordinates].every(block => {
       return !(y / 2 === block[0] && x / 2 === block[1]);
     });
     return noBlock;
@@ -141,6 +146,8 @@ class Main extends React.Component {
     setTimeout(() => {
       this.bombKillsPlayer(tempRadius[0]);
 
+      this.removeKilledEnemy(this.bombKillsEnemy(tempRadius[0]));
+
       this.removeBlocksInRadius(tempRadius[0]);
 
       tempBombs.shift();
@@ -148,12 +155,12 @@ class Main extends React.Component {
 
       tempRadius.shift();
       this.setState({ radius: tempRadius});
-    }, 5000);
+    }, 3000);
   }
 
   // determine the radius of the bomb, filter out indestructible blocks
   getRadius(coord) {
-    let fullRadius = [[coord[0]+1, coord[1]], [coord[0]+2, coord[1]], [coord[0]-1, coord[1]], [coord[0]-2, coord[1]], [coord[0], coord[1]+1], [coord[0], coord[1]+2], [coord[0], coord[1]-1], [coord[0], coord[1]-2]];
+    let fullRadius = [[coord[0]+1, coord[1]], [coord[0]+2, coord[1]], [coord[0]-1, coord[1]], [coord[0]-2, coord[1]], [coord[0], coord[1]+1], [coord[0], coord[1]+2], [coord[0], coord[1]-1], [coord[0], coord[1]-2], [[coord[0]], coord[1]]];
 
     let filteredRadius = fullRadius.filter(coord => {
       return this.blockCoordinates.every(block => {
@@ -166,10 +173,36 @@ class Main extends React.Component {
   // determines if the player is in the bomb radius
   bombKillsPlayer(radiusArr) {
     let playerCoord = this.state.playerCoordinate;
+    // if you find the player coordinate in the radius, set state gameOver to true
     let playerKilled = radiusArr.find(blockCoord => {
       return blockCoord[1] === playerCoord[0]/2 && blockCoord[0] === playerCoord[1]/2;
     }) ? true : false;
     this.setState({gameOver: playerKilled}, () => console.log(this.state.gameOver));
+  }
+
+  bombKillsEnemy(radiusArr) {
+    let enemyCoords = this.state.enemyCoordinates;
+    let enemiesKilled = [];
+    enemyCoords.forEach(enemyCoord => {
+      let foundCoord = radiusArr.find(blockCoord => {
+        return blockCoord[1] === enemyCoord[0]/2 && blockCoord[0] === enemyCoord[1]/2;
+      });
+      if(foundCoord) enemiesKilled.push(foundCoord);
+    });
+    return enemiesKilled;
+  }
+
+  removeKilledEnemy(enemiesKilled) {
+    console.log(enemiesKilled);
+    let enemyArr = this.state.enemyCoordinates;
+    let filteredArr = enemyArr.filter(coord => {
+      return enemiesKilled.every(block => {
+        console.log(`${coord[0]}, ${coord[1]} : ${block[0]}, ${block[1]}`);
+        return !(coord[0]  === block[1]*2 && coord[1] === block[0]*2);
+      });
+    });
+    console.log(filteredArr);
+    this.setState({enemyCoordinates: filteredArr});
   }
 
   // determines if destructible blocks are in radius
@@ -211,6 +244,72 @@ class Main extends React.Component {
   }
 
 
+  // AI Movement
+  // Enemy1 movement
+
+  moveRightAi(coords) {
+    let newCoordinate = [coords[0] + 2, Math.ceil(coords[1])];
+    if (coords[0] < 22 && this.checkBlock(newCoordinate[1], newCoordinate[0] + 2)) {
+      return newCoordinate;
+    } else {
+      return coords;
+    }
+  }
+
+  // decrement the player coordinate one in the x direction if it will not go outside the boundary
+  moveLeftAi(coords) {
+    let newCoordinate = [coords[0] - 2, coords[1]];
+    if (coords[0] > 0 && this.checkBlock(newCoordinate[1], newCoordinate[0] - 2)) {
+      return newCoordinate;
+    } else {
+      return coords;
+    }
+  }
+
+  // decrement the player coordinate one in the y direction if it will not go outside the boundary
+  moveUpAi(coords) {
+    let newCoordinate = [coords[0], coords[1] - 2];
+    if (coords[1] > .1 && this.checkBlock(newCoordinate[1] - 2, newCoordinate[0])) {
+      return newCoordinate;
+    } else {
+      return coords;
+    }
+  }
+
+  // increment the player coordinate one in the y direction if it will not go outside the boundary
+  moveDownAi(coords) {
+    let newCoordinate = [coords[0], coords[1] + 2];
+    if (coords[1] < 22 && this.checkBlock(newCoordinate[1] + 2, newCoordinate[0])) {
+      return newCoordinate;
+    } else {
+      return coords;
+    }
+  }
+
+  moveYourselfAi(coords) {
+  
+    let move = Math.floor(Math.random() * (4) + 1);
+    if (move === 1) {
+      return this.moveLeftAi(coords);
+    } else if (move === 2) {
+      return this.moveUpAi(coords);
+    } else if (move === 3) {
+      return this.moveDownAi(coords);
+    } else {
+     return this.moveRightAi(coords);
+    };
+  }
+
+  getMove() {
+    // let move1 = this.moveYourselfAi(this.state.enemy1Coordinate);
+    // let move2 = this.moveYourselfAi(this.state.enemy2Coordinate);
+    // let move3 = this.moveYourselfAi(this.state.enemy3Coordinate);
+
+    let newCoordArr = this.state.enemyCoordinates.map(enemy => this.moveYourselfAi(enemy));
+    
+    this.setState({enemyCoordinates: newCoordArr});
+  }
+
   render() {
     return (
       <>
@@ -222,6 +321,7 @@ class Main extends React.Component {
             destructibleBlocks={this.state.destructibleBlocks}
             bombCoordinates={this.state.bombCoordinates}
             radius={this.state.radius}
+            enemyCoordinates={this.state.enemyCoordinates}
           />}
       </>
     )
