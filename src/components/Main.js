@@ -33,6 +33,7 @@ class Main extends React.Component {
     this.getBlockCoordinates();
     this.startTimer();
     setInterval( () => this.getMove(), 3000);
+    timer();
   }
 
   componentWillUnmount() {
