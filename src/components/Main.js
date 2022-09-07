@@ -6,7 +6,10 @@ class Main extends React.Component {
     super(props);
     this.state = {
       playerCoordinate: [0, 0],
-      destructibleBlocks: [],
+      enemy1Coordinate: [0, 22],
+      enemy2Coordinate: [22, 0],
+      enemy3Coordinate: [22, 22],
+      destructibleBlocks: [[0, 3], [0, 8], [3, 0], [11, 3], [8, 0], [3, 11], [11, 8], [8, 11]],
       countdown: 5,
       bombCoordinates: [],
       radius: [],
@@ -27,7 +30,9 @@ class Main extends React.Component {
     document.addEventListener('keydown', (e) => { this.handleKeyPress(e) });
     this.getBlockCoordinates();
     this.startTimer();
+    setInterval( () => this.getMove(), 50);
   }
+  
 
   componentWillUnmount() {
     document.removeEventListener('keydown', (e) => { this.handleKeyPress(e) });
@@ -43,19 +48,22 @@ class Main extends React.Component {
 
   // get original destructible blocks
   getBlockCoordinates() {
-    let coordArr = [];
+    let coordArr = [[0, 3], [0, 8], [3, 0], [11, 3], [8, 0], [3, 11], [11, 8], [8, 11]];
 
-    while (coordArr.length < 10) {
-      // generate two random numbers within the 12 by 12 grid
-      let x = Math.floor(Math.random() * 12);
-      let y = Math.floor(Math.random() * 12);
+    // while (coordArr.length < 1) {
+    //   // generate two random numbers within the 12 by 12 grid
+    //   let x = Math.floor(Math.random() * 12);
+    //   let y = Math.floor(Math.random() * 12);
 
-      // check if the generated coordinate is the same as any of the permanent blocks
-      // checkForPermanentBlocks returns false if there is a permanent block at that coordinate
-      let noPermanentBlocks = this.checkBlock(y * 2, x * 2);
-      if (noPermanentBlocks) coordArr.push([x, y]);
-      this.setState({ destructibleBlocks: coordArr });
-    }
+    //   // check if the generated coordinate is the same as any of the permanent blocks
+    //   // checkForPermanentBlocks returns false if there is a permanent block at that coordinate
+    //   let noPermanentBlocks = this.checkBlock(y * 2, x * 2);
+    //   if (noPermanentBlocks) coordArr.push([x, y]);
+    //   this.setState({ destructibleBlocks: coordArr });
+    // }
+    this.setState({
+      destructibleBlocks: coordArr
+    })
   }
 
   // this function is used to check for permanent blocks when player tries to move
@@ -211,6 +219,76 @@ class Main extends React.Component {
   }
 
 
+
+  // AI Movement
+  // Enemy1 movement
+
+  moveRightAi(coords) {
+    let newCoordinate = [coords[0] + 2, Math.ceil(coords[1])];
+    if (coords[0] < 22 && this.checkBlock(newCoordinate[0] + 2, newCoordinate[1])) {
+      return newCoordinate;
+    } else {
+      return coords;
+    }
+  }
+
+  // decrement the player coordinate one in the x direction if it will not go outside the boundary
+  moveLeftAi(coords) {
+    let newCoordinate = [coords[0] - 2, coords[1]];
+    if (coords[0] > 0 && this.checkBlock(newCoordinate[0] - 2, newCoordinate[1])) {
+      return newCoordinate;
+    } else {
+      return coords;
+    }
+  }
+
+  // decrement the player coordinate one in the y direction if it will not go outside the boundary
+  moveUpAi(coords) {
+    let newCoordinate = [coords[0], coords[1] - 2];
+    if (coords[1] > .1 && this.checkBlock(newCoordinate[0], newCoordinate[1] - 2)) {
+      return newCoordinate;
+    } else {
+      return coords;
+    }
+  }
+
+  // increment the player coordinate one in the y direction if it will not go outside the boundary
+  moveDownAi(coords) {
+    let newCoordinate = [coords[0], coords[1] + 2];
+    if (coords[1] < 22 && this.checkBlock(newCoordinate[0], newCoordinate[1] + 2)) {
+      return newCoordinate;
+    } else {
+      return coords;
+    }
+  }
+
+  moveYourselfAi(coords) {
+  
+    let move = Math.floor(Math.random() * (4) + 1);
+    if (move === 1) {
+      return this.moveLeftAi(coords);
+    } else if (move === 2) {
+      return this.moveUpAi(coords);
+    } else if (move === 3) {
+      return this.moveDownAi(coords);
+    } else {
+     return this.moveRightAi(coords);
+    };
+  }
+
+  getMove() {
+    let move1 = this.moveYourselfAi(this.state.enemy1Coordinate);
+    let move2 = this.moveYourselfAi(this.state.enemy2Coordinate);
+    let move3 = this.moveYourselfAi(this.state.enemy3Coordinate);
+    
+    this.setState({
+      enemy1Coordinate: move1,
+      enemy2Coordinate: move2, 
+      enemy3Coordinate: move3
+    })
+  }
+
+
   render() {
     return (
       <>
@@ -218,10 +296,14 @@ class Main extends React.Component {
         {this.state.countdown <= 0 &&
           <GameCanvas
             playerCoordinate={this.state.playerCoordinate}
+            enemy1Coordinate={this.state.enemy1Coordinate}
+            enemy2Coordinate={this.state.enemy2Coordinate}
+            enemy3Coordinate={this.state.enemy3Coordinate}
             blockCoordinates={this.blockCoordinates}
             destructibleBlocks={this.state.destructibleBlocks}
             bombCoordinates={this.state.bombCoordinates}
             radius={this.state.radius}
+
           />}
       </>
     )
