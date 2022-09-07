@@ -1,11 +1,9 @@
 import Main from './components/Main.js';
 import './App.css';
 import React from 'react';
-import { useAuth0, withAuth0 } from '@auth0/auth0-react';
-import Profile from './Profile';
+import { withAuth0 } from '@auth0/auth0-react';
 import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
-import Content from './Content';
 
 // function App() {
 //   return (

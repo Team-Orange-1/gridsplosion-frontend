@@ -7,6 +7,7 @@ class Main extends React.Component {
     this.state = {
       playerCoordinate: [0, 0],
       enemyCoordinates:[[0,22], [22, 0], [22, 22]],
+      // 
       // enemy1Coordinate: [0, 22],
       // enemy2Coordinate: [22, 0],
       // enemy3Coordinate: [22, 22],
@@ -31,7 +32,7 @@ class Main extends React.Component {
     document.addEventListener('keydown', (e) => { this.handleKeyPress(e) });
     this.getBlockCoordinates();
     this.startTimer();
-    setInterval( () => this.getMove(), 4000);
+    setInterval( () => this.getMove(), 3000);
   }
 
   componentWillUnmount() {
@@ -68,7 +69,7 @@ class Main extends React.Component {
   // also used to check if there is blocks in the bomb radius
   checkBlock(x, y) {
     let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks, ...this.state.bombCoordinates].every(block => {
-      // console.log(`(${x}, ${y}) : ${block[1]}, ${block[0]}`);
+      console.log(`(${x}, ${y}) : ${block[1]}, ${block[0]}`);
       return !(y / 2 === block[0] && x / 2 === block[1]);
     });
     return noBlock;
@@ -304,7 +305,6 @@ class Main extends React.Component {
 
   getMove() {
     let newCoordArr = this.state.enemyCoordinates.map(enemy => this.moveYourselfAi(enemy));
-    // console.log(newCoordArr[0], newCoordArr[1]);
     this.setState({enemyCoordinates: newCoordArr});
   }
 
