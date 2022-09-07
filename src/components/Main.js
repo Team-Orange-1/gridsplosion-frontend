@@ -46,6 +46,24 @@ class Main extends React.Component {
       this.setState({ countdown: decrement }, () => { if (this.state.countdown <= 0) clearInterval(interval) });
     }, 1000)
   }
+  
+  // Score / timer
+    timer(){
+    console.log(this.state.score);
+    var sec = 0;
+    var timer = setInterval(() => {
+        console.log('00:'+sec);
+        sec++;
+        if (sec > 6) {
+          let time = sec;
+            clearInterval(timer);
+            console.log(time);
+            this.setState({
+              score: time
+            })
+        }
+    }, 1000);
+}
 
   // get original destructible blocks
   getBlockCoordinates() {
