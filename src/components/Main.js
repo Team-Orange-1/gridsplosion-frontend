@@ -8,10 +8,12 @@ class Main extends React.Component {
       playerCoordinate: [0, 0],
       destructibleBlocks: [],
       countdown: 5,
-      bombCoordinates: []
+      bombCoordinates: [],
+      radius: []
     }
   }
 
+  // coordinates for the 
   blockCoordinates = [
     [1, 1], [1, 2], [2, 1], [2, 2], [0, 5], [0, 6], [1, 9], [1, 10], [2, 4], [2, 7], [2, 9], [2, 10],
     [3, 5], [3, 6], [4, 5], [4, 6], [5, 0], [6, 0], [5, 3], [6, 2], [6, 3], [5, 8], [5, 9], [6, 8],
@@ -36,14 +38,6 @@ class Main extends React.Component {
       let decrement = this.state.countdown - 1;
       this.setState({ countdown: decrement }, () => { if (this.state.countdown <= 0) clearInterval(interval) });
     }, 1000)
-  }
-
-  // make sure the the destructible block doesn't land on a player, also make sure the player isn't trapped by destructible blocks
-  checkIfPlayer(x, y) {
-    let checkPlayer = (y === 0) && (x === 0);
-    let trappedXDirection = (y === 0 && x === 1) || (y === 0 && x === 2) || (y === 0 && x === 3);
-    let trappedYDirection = (y === 1 && x === 0) || (y === 2 && x === 0) || (y === 3 && x === 0);
-    return (checkPlayer || trappedXDirection || trappedYDirection);
   }
 
   // get original destructible blocks
@@ -118,25 +112,26 @@ class Main extends React.Component {
     if (this.state.bombCoordinates.length < 5 && !duplicate) {
       let bombArr = this.state.bombCoordinates;
       bombArr.push(newCoord);
-      this.setState({ bombCoordinates: bombArr });
+      this.setState({ bombCoordinates: bombArr }, this.explosion);
+
+      let radiusArr = this.state.radius;
+      radiusArr.push(this.getRadius(newCoord));
+      this.setState({radius: radiusArr});
     }
-    this.explosion();
   }
 
   // when timer goes off, check for destructible blocks, enemies, and player in bomb radius 
   explosion() {
-    console.log(this.state);
     let temp = this.state.bombCoordinates;
     setTimeout(() => {
       temp.shift();
-    }, 3000);
-    this.setState({ bombCoordinates: temp });
+      this.setState({ bombCoordinates: temp });
+    }, 5000);
   }
 
-  // start AI with component did mount
-  // use an interval to change the x and y coordinates of the AI
-  startEnemyAI() {
-
+  // determine the radius of the bomb, and check what is in that radius
+  getRadius(coord) {
+    return [[coord[1]+1, coord[0]], [coord[1]+2, coord[0]], [coord[1]-1, coord[0]], [coord[1]-2, coord[0]], [coord[1], coord[0]+1], [coord[1], coord[0]+2], [coord[1], coord[0]-1], [coord[1], coord[0]-2]];
   }
 
   // event handler, moves player depending on the key pressed
@@ -168,6 +163,7 @@ class Main extends React.Component {
             blockCoordinates={this.blockCoordinates}
             destructibleBlocks={this.state.destructibleBlocks}
             bombCoordinates={this.state.bombCoordinates}
+            radius={this.state.radius}
           />}
       </>
     )

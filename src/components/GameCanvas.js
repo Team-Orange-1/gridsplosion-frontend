@@ -37,12 +37,19 @@ const GameCanvas = props => {
     props.bombCoordinates.forEach(coord => {
       context.fillStyle = 'red';
       context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
-    })
+    });
+    // console.log(props.radius);
+    // props.radius.forEach(coordArr => {
+    //   coordArr.forEach(coord => {
+    //     context.fillStyle = '#ffbebe';
+    //     context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
+    //   })
+    // })
 
     // fills the canvas in where the player is
     context.fillStyle = 'blue';
     context.fillRect(props.playerCoordinate[0]/2 * blockSize, props.playerCoordinate[1]/2 * blockSize, blockSize, blockSize);
-  }, [props.playerCoordinate, props.blockCoordinates, props.destructibleBlocks, props.bombCoordinates]);
+  }, [props.playerCoordinate, props.blockCoordinates, props.destructibleBlocks, props.bombCoordinates, props.radius]);
   
   return <canvas ref={canvasRef} width='600px' height='600px'/>
 }
