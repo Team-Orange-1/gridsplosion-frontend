@@ -37,7 +37,12 @@ const GameCanvas = props => {
     // fills the canvas in where the player is
     context.fillStyle = 'blue';
     context.fillRect(props.playerCoordinate[0]/2 * blockSize, props.playerCoordinate[1]/2 * blockSize, blockSize, blockSize);
-  }, [props.playerCoordinate, props.blockCoordinates, props.destructibleBlocks]);
+
+    // fills the canvas in where the enemy is
+    context.fillStyle = 'red';
+    context.fillRect(props.enemyCoordinate[0]/2 * blockSize, props.enemyCoordinate[1]/2 * blockSize, blockSize, blockSize);
+
+  }, [props.playerCoordinate, props.enemyCoordinate, props.blockCoordinates, props.destructibleBlocks]);
   
   return <canvas ref={canvasRef} width='600px' height='600px'/>
 }
