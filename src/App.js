@@ -4,15 +4,7 @@ import React from 'react';
 import { withAuth0 } from '@auth0/auth0-react';
 import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
-
-// function App() {
-//   return (
-//     <>
-//       <Main/>
-//     </>
-//   );
-// }
-// export default App;
+import Profile from './Profile'
 
 class App extends React.Component {
   render() {
@@ -24,7 +16,7 @@ class App extends React.Component {
             : <LoginButton/>
           }
           {this.props.auth0.isAuthenticated
-            ? <Main/>
+          ? <><Profile/> <Main/></> 
             : <h2>Please log in</h2>
           }
         </>
