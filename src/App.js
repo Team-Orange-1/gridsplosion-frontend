@@ -1,11 +1,10 @@
 import Main from './components/Main.js';
 import './App.css';
 import React from 'react';
-import { useAuth0, withAuth0 } from '@auth0/auth0-react';
-import Profile from './Profile';
+import { withAuth0 } from '@auth0/auth0-react';
 import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
-import Content from './Content';
+import Profile from './Profile'
 
 class App extends React.Component {
   render() {
@@ -17,7 +16,7 @@ class App extends React.Component {
             : <LoginButton/>
           }
           {this.props.auth0.isAuthenticated
-            ? <><Profile/> <Main/></> 
+          ? <><Profile/> <Main/></> 
             : <h2>Please log in</h2>
           }
         </>
@@ -28,7 +27,7 @@ class App extends React.Component {
   // useAuth0 — is for functional components
   // withAuth0 — is for class components
   
-  // let SERVER = process.env.REACT_APP_SERVER; 
+  let SERVER = process.env.REACT_APP_SERVER; 
 
 
 export default withAuth0 (App);

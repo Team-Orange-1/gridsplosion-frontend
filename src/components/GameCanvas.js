@@ -28,11 +28,39 @@ const GameCanvas = props => {
       context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
     });
 
+    // fills the canvas in to show radius
+    props.radius.forEach(coordArr => {
+      coordArr.forEach(coord => {
+        context.fillStyle = '#ffbebe';
+        context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
+      });
+    });
+
+    // fills the canvas in purple wherever the destructible blocks are
+    props.destructibleBlocks.forEach(coord => {
+      context.fillStyle = 'purple';
+      context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
+    });
+
+
+    // fills the canvas red wherever a bomb is dropped
+    props.bombCoordinates.forEach(coord => {
+      context.fillStyle = 'red';
+      context.fillRect(coord[1] * blockSize, coord[0] * blockSize, blockSize, blockSize);
+    });
+
     // fills the canvas in where the player is
     context.fillStyle = 'blue';
     context.fillRect(props.playerCoordinate[0]/2 * blockSize, props.playerCoordinate[1]/2 * blockSize, blockSize, blockSize);
-  }, [props.playerCoordinate, props.blockCoordinates]);
-  
+
+    // fills the canvas in with all the enemies
+    props.enemyCoordinates.forEach(enemy => {
+    context.fillStyle = 'black';
+    context.fillRect(enemy[0]/2 * blockSize, enemy[1]/2 * blockSize, blockSize, blockSize);
+    })
+
+  }, [props.playerCoordinate, props.blockCoordinates, props.destructibleBlocks, props.bombCoordinates, props.radius, props.enemyCoordinates]);
+
   return <canvas ref={canvasRef} width='600px' height='600px'/>
 }
 

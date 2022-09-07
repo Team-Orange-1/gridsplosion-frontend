@@ -17,4 +17,9 @@
 
 ![Screenshot1](src/images/1.PNG "UML")
 
+<<<<<<< HEAD
 ![Screenshot2](src/images/2.PNG "Users Stories")
+=======
+![Screenshot1](src/images/1.PNG)
+![Screenshot2](src/images/2.PNG)
+>>>>>>> cb2136e65d56ce1f8ffd062a7101bdbf27b14dc2
