@@ -1,25 +1,52 @@
-import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import { withAuth0 } from '@auth0/auth0-react';
+import LoginButton from './LoginButton';
+import LogoutButton from './LogoutButton';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import Profile from './Profile';
+import Player from './components/Player'
 
-export default App;
+class App extends React.Component {
+  render() {
+    const {user} = this.props.auth0;
+
+    return (
+      <>
+          <h1>new</h1>
+          {this.props.auth0.isAuthenticated
+            ? <LogoutButton/>
+            : <LoginButton/>
+          }
+          {this.props.auth0.isAuthenticated
+
+          ? <>
+            <Profile/>
+            <Player user={user}/>
+          </> 
+
+            : <h2>Please log in</h2>
+          }
+        </>
+      )
+    }
+  }
+  
+  // useAuth0 — is for functional components
+  // withAuth0 — is for class components
+
+
+
+export default withAuth0 (App);
+
+
+
+// class App extends React.Component {
+//   render() {
+//     return(
+//       <Main/>
+//     )
+//   }
+// }
+
+// export default Main;
