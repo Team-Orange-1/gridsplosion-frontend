@@ -12,7 +12,10 @@ class Main extends React.Component {
       countdown: 5,
       bombCoordinates: [],
       radius: [],
-      gameOver: false
+      gameOver: false,
+      isWinner: false,
+      gameCounter: 0,
+      score: 0
     }
   }
 
@@ -49,9 +52,32 @@ class Main extends React.Component {
           setInterval(() => {
             this.setAiState();
           }, 300);
+          // start game timer
+          this.timer();
         }
       });
     }, 1000)
+  }
+
+  timer() {
+    let sec = 0;
+    let timer = setInterval(() => {
+      sec++;
+      console.log(this.state.score);
+      if (sec > 30 || this.state.gameOver) {
+        let timeBonus = 30 - sec;
+        console.log(timeBonus);
+        let totalScore = this.state.score + timeBonus;
+        clearInterval(timer);
+        this.setState({
+          score: totalScore
+        }, console.log(this.state.score));
+      }
+    }, 1000);
+  }
+
+  endGame() {
+    
   }
 
   // call the backend server, this calls a dice roll api to generate the number of random destructible blocks
@@ -59,7 +85,7 @@ class Main extends React.Component {
     try {
       let response = await axios.get(`${process.env.REACT_APP_SERVER}/dice`);
       return response.data.rolls[0];
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   }
@@ -211,6 +237,7 @@ class Main extends React.Component {
     let playerKilled = radiusArr.find(blockCoord => {
       return blockCoord[1] === playerCoord[0] / 2 && blockCoord[0] === playerCoord[1] / 2;
     }) ? true : false;
+    if (playerKilled) this.setState({ isWinner: false });
     this.setState({ gameOver: playerKilled });
   }
 
@@ -230,13 +257,20 @@ class Main extends React.Component {
 
   // takes the enemies to kill array from bombKillsEnemy and removes them from the enemy coordinates array in state
   removeKilledEnemy(enemiesKilled) {
+    // enemy kills are worth 5 points
+    let newScore = this.state.score + (enemiesKilled.length * 5);
+    this.setState({ score: newScore });
+
     let enemyArr = this.state.enemyCoordinates;
     let filteredArr = enemyArr.filter(coord => {
       return enemiesKilled.every(block => {
         return !(coord[0] === block[1] * 2 && coord[1] === block[0] * 2);
       });
     });
-    this.setState({ enemyCoordinates: filteredArr });
+
+    let endGame = filteredArr.length === 0;
+
+    this.setState({ enemyCoordinates: filteredArr, gameOver: endGame });
   }
 
   // determines if destructible blocks are in radius
@@ -247,6 +281,10 @@ class Main extends React.Component {
         return !(coord[0] === block[0] && coord[1] === block[1]);
       });
     });
+
+    // destroying blocks is worth one point
+    let newScore = this.state.score + (removeArr.length * 1);
+    this.setState({ score: newScore });
 
     // remove the blocks in the radius from the destructible blocks array
     let destructibleBlockArr = this.state.destructibleBlocks;
