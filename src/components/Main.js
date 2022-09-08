@@ -77,11 +77,10 @@ class Main extends React.Component {
     let sec = 0;
     setInterval(() => {
       sec++;
-      let min = 0;
-      if(sec === 60) {
-        min++;
-        sec = 0;
-      }
+      this.setState({
+        score: sec
+      })
+      console.log(sec);
     }, 1000);
   }
 
@@ -371,15 +370,18 @@ class Main extends React.Component {
       <>
         {this.state.countdown > 0 && <h2>{this.state.countdown}</h2>}
         {(this.state.countdown <= 0 && !this.state.gameOver) &&
-          <GameCanvas
+          <div>
+            <div>{this.state.score}</div>
+            <GameCanvas
             playerCoordinate={this.state.playerCoordinate}
             blockCoordinates={this.blockCoordinates}
             destructibleBlocks={this.state.destructibleBlocks}
             bombCoordinates={this.state.bombCoordinates}
             radius={this.state.radius}
             enemyCoordinates={this.state.enemyCoordinates}
-          />}
-          <EndgameModal gameOver={this.state.gameOver} startGame={this.startGame.bind(this)}/>
+          />
+          </div>}
+          <EndgameModal enemyCoordinates={this.state.enemyCoordinates} gameOver={this.state.gameOver} score={this.state.score} startGame={this.startGame.bind(this)}/>
       </>
     )
   }
