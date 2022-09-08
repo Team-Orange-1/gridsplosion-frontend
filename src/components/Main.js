@@ -46,6 +46,31 @@ class Main extends React.Component {
     }, 50);
   }
 
+  startGame() {
+    console.log('clicked');
+    this.setState({
+      playerCoordinate: [0, 0],
+      enemyCoordinates: [[22, 0], [0, 22], [22, 22], [10, 10]],
+      destructibleBlocks: [],
+      countdown: 5,
+      bombCoordinates: [],
+      radius: [],
+      gameOver: false,
+      gameCounter: 0,
+      score: 0
+    }, () => {
+      document.addEventListener('keydown', (e) => { this.handleKeyPress(e) });
+      this.getBlockCoordinates();
+      this.startTimer();
+    });
+
+  }
+
+  endGame() {
+    this.clearAllIntervals();
+    this.setState({gameOver: true});
+  }
+
   // 5 second countdown, game canvas is rendered when countdown equals 0
   startTimer() {
     let interval = setInterval(() => {
@@ -74,10 +99,6 @@ class Main extends React.Component {
         sec = 0;
       }
     }, 1000);
-  }
-
-  endGame() {
-    this.clearAllIntervals();
   }
 
   // call the backend server, this calls a dice roll api to generate the number of random destructible blocks
@@ -238,10 +259,7 @@ class Main extends React.Component {
       return blockCoord[1] === playerCoord[0] / 2 && blockCoord[0] === playerCoord[1] / 2;
     }) ? true : false;
     console.log(playerKilled);
-    if(playerKilled) {
-      this.setState({gameOver: true}, () => {console.log(this.state.gameOver)});
-      this.endGame();
-    }
+    if(playerKilled) this.endGame();
   }
 
   // this function loops through the radius array and finds an enemies in the radius
@@ -271,7 +289,7 @@ class Main extends React.Component {
       });
     });
 
-    let endGame = filteredArr.length === 0;
+    filteredArr.length === 0 && this.endGame();
 
     this.setState({ enemyCoordinates: filteredArr});
   }
@@ -377,7 +395,7 @@ class Main extends React.Component {
             radius={this.state.radius}
             enemyCoordinates={this.state.enemyCoordinates}
           />}
-          <EndgameModal gameOver={this.state.gameOver}/>
+          <EndgameModal gameOver={this.state.gameOver} startGame={this.startGame.bind(this)}/>
       </>
     )
   }
