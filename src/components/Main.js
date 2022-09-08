@@ -54,7 +54,7 @@ class Main extends React.Component {
     this.clearAllIntervals();
     this.setState({gameOver: true}, () => {
       if(this.state.score > this.props.highScore) {
-        this.props.updateScore();
+        this.props.updateScore(this.state.score);
       }
     });
   }
@@ -145,32 +145,32 @@ class Main extends React.Component {
 
   // increment the player coordinate one in the x direction if it will not go outside the boundary
   moveRight() {
-    let newCoordinate = [this.state.playerCoordinate[0] + 1, this.state.playerCoordinate[1]];
-    if (this.state.playerCoordinate[0] < 22 && this.checkBlock(newCoordinate[0] + 1, newCoordinate[1])) {
+    let newCoordinate = [this.state.playerCoordinate[0] + 2, this.state.playerCoordinate[1]];
+    if (this.state.playerCoordinate[0] < 22 && this.checkBlock(newCoordinate[0] + 2, newCoordinate[1])) {
       this.setState({ playerCoordinate: newCoordinate });
     }
   }
 
   // decrement the player coordinate one in the x direction if it will not go outside the boundary
   moveLeft() {
-    let newCoordinate = [this.state.playerCoordinate[0] - 1, this.state.playerCoordinate[1]];
-    if (this.state.playerCoordinate[0] > 0 && this.checkBlock(newCoordinate[0] - 1, newCoordinate[1])) {
+    let newCoordinate = [this.state.playerCoordinate[0] - 2, this.state.playerCoordinate[1]];
+    if (this.state.playerCoordinate[0] > 0 && this.checkBlock(newCoordinate[0] - 2, newCoordinate[1])) {
       this.setState({ playerCoordinate: newCoordinate });
     }
   }
 
   // decrement the player coordinate one in the y direction if it will not go outside the boundary
   moveUp() {
-    let newCoordinate = [this.state.playerCoordinate[0], this.state.playerCoordinate[1] - 1];
-    if (this.state.playerCoordinate[1] > .1 && this.checkBlock(newCoordinate[0], newCoordinate[1] - 1)) {
+    let newCoordinate = [this.state.playerCoordinate[0], this.state.playerCoordinate[1] - 2];
+    if (this.state.playerCoordinate[1] > .1 && this.checkBlock(newCoordinate[0], newCoordinate[1] - 2)) {
       this.setState({ playerCoordinate: newCoordinate });
     }
   }
 
   // increment the player coordinate one in the y direction if it will not go outside the boundary
   moveDown() {
-    let newCoordinate = [this.state.playerCoordinate[0], this.state.playerCoordinate[1] + 1];
-    if (this.state.playerCoordinate[1] < 22 && this.checkBlock(newCoordinate[0], newCoordinate[1] + 1)) {
+    let newCoordinate = [this.state.playerCoordinate[0], this.state.playerCoordinate[1] + 2];
+    if (this.state.playerCoordinate[1] < 22 && this.checkBlock(newCoordinate[0], newCoordinate[1] + 2)) {
       this.setState({ playerCoordinate: newCoordinate });
     }
   }
@@ -384,7 +384,7 @@ class Main extends React.Component {
             enemyCoordinates={this.state.enemyCoordinates}
           />
           </div>}
-          <EndgameModal enemyCoordinates={this.state.enemyCoordinates} gameOver={this.state.gameOver} score={this.state.score} startGame={this.startGame.bind(this)}/>
+          <EndgameModal enemyCoordinates={this.state.enemyCoordinates} gameOver={this.state.gameOver} score={this.state.score} startGame={this.startGame.bind(this)} leaders={this.props.leaders}/>
       </>
     )
   }
