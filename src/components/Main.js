@@ -6,11 +6,7 @@ class Main extends React.Component {
     super(props);
     this.state = {
       playerCoordinate: [0, 0],
-      enemyCoordinates:[[0,22], [22, 0], [22, 22]],
-      // 
-      // enemy1Coordinate: [0, 22],
-      // enemy2Coordinate: [22, 0],
-      // enemy3Coordinate: [22, 22],
+      enemyCoordinates:[[22,0]],
       destructibleBlocks: [],
       countdown: 5,
       bombCoordinates: [],
@@ -32,7 +28,6 @@ class Main extends React.Component {
     document.addEventListener('keydown', (e) => { this.handleKeyPress(e) });
     this.getBlockCoordinates();
     this.startTimer();
-    setInterval( () => this.getMove(), 3000);
   }
 
   componentWillUnmount() {
@@ -43,7 +38,15 @@ class Main extends React.Component {
   startTimer() {
     let interval = setInterval(() => {
       let decrement = this.state.countdown - 1;
-      this.setState({ countdown: decrement }, () => { if (this.state.countdown <= 0) clearInterval(interval) });
+      this.setState({ countdown: decrement }, () => { 
+        if (this.state.countdown <= 0) {
+          clearInterval(interval)
+          // start AI movement
+          setInterval(() => {
+            this.setAiState();
+          }, 100);
+        } 
+      });
     }, 1000)
   }
 
@@ -69,7 +72,7 @@ class Main extends React.Component {
   // also used to check if there is blocks in the bomb radius
   checkBlock(x, y) {
     let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks, ...this.state.bombCoordinates].every(block => {
-      console.log(`(${x}, ${y}) : ${block[1]}, ${block[0]}`);
+      // console.log(`(${x}, ${y}) : ${block[1]}, ${block[0]}`);
       return !(y / 2 === block[0] && x / 2 === block[1]);
     });
     return noBlock;
@@ -248,64 +251,45 @@ class Main extends React.Component {
     }
   }
 
-
   // AI Movement
-  moveRightAi(coords) {
-    let newCoordinate = [coords[0] + 2, Math.ceil(coords[1])];
-    if (coords[0] < 22 && this.checkBlock((newCoordinate[1], newCoordinate[0] + 2))) {
-      return newCoordinate;
-    } else {
-      return coords;
+  setAiState() {
+    let newEnemyArr = this.state.enemyCoordinates.map(coords => {
+      return this.moveAI(coords);
+    });
+    this.setState({enemyCoordinates : newEnemyArr});
+  }
+
+  moveAI(coords) {
+    let moveDirection = Math.floor(Math.random() * 3);
+    // console.log(Math.floor(Math.random() * 3));
+    // let moveDirection = 2;
+    switch(moveDirection) {
+      case 0 : return this.moveAiRight(coords);
+      case 1 : return this.moveAiLeft(coords);
+      case 2 : return this.moveAiUp(coords);
+      case 3 : return this.moveAiDown(coords);
+      default: return 0;
     }
   }
 
-  // decrement the player coordinate one in the x direction if it will not go outside the boundary
-  moveLeftAi(coords) {
-    let newCoordinate = [coords[0] - 2, coords[1]];
-    if (coords[0] > 0 && this.checkBlock((newCoordinate[0] - 1), newCoordinate[1])) {
-      return newCoordinate;
-    } else {
-      return coords;
-    }
+  moveAiRight(coords) {
+    let newCoord = [coords[0] + 2, coords[1]];
+    return (newCoord[0] < 22 && this.checkBlock(newCoord[0]+2, newCoord[1])) ? newCoord : coords; 
   }
 
-  // decrement the player coordinate one in the y direction if it will not go outside the boundary
-  moveUpAi(coords) {
-    let newCoordinate = [coords[0], coords[1] - 2];
-    if (coords[1] > .1 && this.checkBlock(newCoordinate[0], newCoordinate[1] - 2)) {
-      return newCoordinate;
-    } else {
-      return coords;
-    }
+  moveAiLeft(coords) {
+    let newCoord = [coords[0] - 2, coords[1]];
+    return (newCoord[0] > 0 && this.checkBlock(newCoord[0]-2, newCoord[1])) ? newCoord : coords; 
   }
 
-  // increment the player coordinate one in the y direction if it will not go outside the boundary
-  moveDownAi(coords) {
-    let newCoordinate = [coords[0], coords[1] + 2];
-    if (coords[1] < 22 && this.checkBlock(newCoordinate[0], newCoordinate[1] + 2)) {
-      return newCoordinate;
-    } else {
-      return coords;
-    }
+  moveAiUp(coords) {
+    let newCoord = [coords[0], coords[1] - 2];
+    return (newCoord[1] > 0 && this.checkBlock(newCoord[0], newCoord[1]-2)) ? newCoord : coords; 
   }
 
-  moveYourselfAi(coords) {
-  
-    let move = Math.floor(Math.random() * (4) + 1);
-    if (move === 1) {
-      return this.moveLeftAi(coords);
-    } else if (move === 2) {
-      return this.moveUpAi(coords);
-    } else if (move === 3) {
-      return this.moveDownAi(coords);
-    } else {
-     return this.moveRightAi(coords);
-    };
-  }
-
-  getMove() {
-    let newCoordArr = this.state.enemyCoordinates.map(enemy => this.moveYourselfAi(enemy));
-    this.setState({enemyCoordinates: newCoordArr});
+  moveAiDown(coords) {
+    let newCoord = [coords[0], coords[1] + 2];
+    return (newCoord[1] < 22 && this.checkBlock(newCoord[0], newCoord[1]+2)) ? newCoord : coords; 
   }
 
   render() {
@@ -325,60 +309,5 @@ class Main extends React.Component {
     )
   }
 }
-
-// render() {
-//   return (
-//   <Modal
-//     show={this.props.show}
-//     onHide={this.props.onHide}
-//   >
-//     <Container>
-//       <Card className="booksDisplay">
-//         <Form onSubmit={this.handleBookEditSubmit}>
-//           <Form.Group controlId="title">
-//             <Form.Label>Title</Form.Label>
-//             <Form.Control placeholder="Enter a book title"
-//               type="text"
-//               input="title"
-//               onInput={this.handleTitleInput}
-//               defaultValue={this.props.book.title}
-//             />
-//           </Form.Group>
-
-//           <Form.Group controlId="description">
-//             <Form.Label>Description</Form.Label>
-//             <Form.Control placeholder="Enter a brief description"
-//               type="text"
-//               input="description"
-//               onInput={this.handleDescriptionInput}
-//               defaultValue={this.props.book.description}
-//             />
-//           </Form.Group>
-
-//           <Form.Group controlId="status">
-//             <Form.Label>Status</Form.Label>
-//             <Form.Control placeholder="Enter a status description"
-//               type="text"
-//               input="status"
-//               onInput={this.handleStatusInput}
-//               defaultValue={this.props.book.status}
-//             />
-//           </Form.Group>
-
-//           <Button
-//             disabled={this.state.title.length < 1 || this.state.description.length < 1 || this.state.status.length < 1}
-//             type="submit">
-//             Complete Edit
-//           </Button>
-//         </Form>
-//       </Card>
-//     </Container>
-//   </Modal>
-// )
-// }
-
-
-
-
 
 export default Main;
