@@ -1,5 +1,6 @@
 import GameCanvas from './GameCanvas';
 import React from 'react';
+import axios from 'axios';
 
 class Main extends React.Component {
   constructor(props) {
@@ -53,11 +54,21 @@ class Main extends React.Component {
     }, 1000)
   }
 
-  // get original destructible blocks
-  getBlockCoordinates() {
-    let coordArr = [];
+  // call the backend server, this calls a dice roll api to generate the number of random destructible blocks
+  getRandNum = async () => {
+    try {
+      let response = await axios.get(`${process.env.REACT_APP_SERVER}/dice`);
+      return response.data.rolls[0];
+    } catch(e) {
+      console.log(e);
+    }
+  }
 
-    while (coordArr.length < 20) {
+  // get original destructible blocks
+  getBlockCoordinates = async () => {
+    let coordArr = [];
+    let randNum = await this.getRandNum();
+    while (coordArr.length < randNum) {
       // generate two random numbers within the 12 by 12 grid
       let x = Math.floor(Math.random() * 12);
       let y = Math.floor(Math.random() * 12);
@@ -70,7 +81,6 @@ class Main extends React.Component {
       // return false if it the coordinate is okay
       let playerNotTrapped = this.determineTrapped(y, x);
 
-      console.log(playerNotTrapped);
       if (noPermanentBlocks && playerNotTrapped) coordArr.push([y, x]);
       this.setState({ destructibleBlocks: coordArr });
     }
