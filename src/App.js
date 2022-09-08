@@ -32,4 +32,14 @@ class App extends React.Component {
 
 export default withAuth0 (App);
 
+// class App extends React.Component {
+//   render() {
+//     return(
+//       <Main/>
+//     )
+//   }
+// }
+
+// export default Main;
+
 
