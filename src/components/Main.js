@@ -15,7 +15,7 @@ class Main extends React.Component {
       radius: [],
       gameOver: false,
       gameCounter: 0,
-      score: 0
+      score: 0,
     }
   }
 

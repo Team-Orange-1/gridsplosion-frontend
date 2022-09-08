@@ -2,11 +2,6 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 
 class EndgameModal extends React.Component {
-  constructor(props) {
-    super(props);
-    console.log(this.props);
-  }
-
   render() {
     return (
       <Modal show={this.props.gameOver}>
