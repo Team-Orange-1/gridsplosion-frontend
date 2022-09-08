@@ -19,20 +19,6 @@ class Main extends React.Component {
     }
   }
 
-  // start a new game after the modal is closed
-  startNewGame() {
-    // this.setState({
-    //   playerCoordinate: [0, 0],
-    //   enemyCoordinates: [[22, 0], [0, 22], [22, 22], [10, 10]],
-    //   destructibleBlocks: [],
-    //   countdown: 5,
-    //   bombCoordinates: [],
-    //   radius: [],
-    //   gameOver: false,
-    //   gameCounter: 0,
-    //   score: 0
-    // }, () => this.startTimer);
-  }
 
   // coordinates for the permanent orange blocks
   blockCoordinates = [
@@ -60,6 +46,31 @@ class Main extends React.Component {
     }, 50);
   }
 
+  startGame() {
+    console.log('clicked');
+    this.setState({
+      playerCoordinate: [0, 0],
+      enemyCoordinates: [[22, 0], [0, 22], [22, 22], [10, 10]],
+      destructibleBlocks: [],
+      countdown: 5,
+      bombCoordinates: [],
+      radius: [],
+      gameOver: false,
+      gameCounter: 0,
+      score: 0
+    }, () => {
+      document.addEventListener('keydown', (e) => { this.handleKeyPress(e) });
+      this.getBlockCoordinates();
+      this.startTimer();
+    });
+
+  }
+
+  endGame() {
+    this.clearAllIntervals();
+    this.setState({gameOver: true});
+  }
+
   // 5 second countdown, game canvas is rendered when countdown equals 0
   startTimer() {
     let interval = setInterval(() => {
@@ -83,20 +94,11 @@ class Main extends React.Component {
     setInterval(() => {
       sec++;
       let min = 0;
-      if (this.state.gameOver) {
-        let timeBonus = 500 - (min + sec);
-        let totalScore = timeBonus + this.state.score;
-        this.endGame(totalScore);
-      } else if(sec === 60) {
+      if(sec === 60) {
         min++;
         sec = 0;
       }
     }, 1000);
-  }
-
-  endGame(finalScore) {
-    this.clearAllIntervals();
-    this.setState({gameOver: true, score: finalScore}, () => console.log(this.state.score, this.state.gameOver, this.state));
   }
 
   // call the backend server, this calls a dice roll api to generate the number of random destructible blocks
@@ -287,9 +289,9 @@ class Main extends React.Component {
       });
     });
 
-    let endGame = filteredArr.length === 0;
+    filteredArr.length === 0 && this.endGame();
 
-    this.setState({ enemyCoordinates: filteredArr, gameOver: endGame });
+    this.setState({ enemyCoordinates: filteredArr});
   }
 
   // determines if destructible blocks are in radius
@@ -383,7 +385,6 @@ class Main extends React.Component {
   render() {
     return (
       <>
-        {console.log(this.state.gameOver)}
         {this.state.countdown > 0 && <h2>{this.state.countdown}</h2>}
         {(this.state.countdown <= 0 && !this.state.gameOver) &&
           <GameCanvas
@@ -394,7 +395,7 @@ class Main extends React.Component {
             radius={this.state.radius}
             enemyCoordinates={this.state.enemyCoordinates}
           />}
-          <EndgameModal gameOver={this.state.gameOver} startNewGame={this.state.startNewGame}/>
+          <EndgameModal gameOver={this.state.gameOver} startGame={this.startGame.bind(this)}/>
       </>
     )
   }
