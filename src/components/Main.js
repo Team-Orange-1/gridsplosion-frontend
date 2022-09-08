@@ -6,7 +6,7 @@ class Main extends React.Component {
     super(props);
     this.state = {
       playerCoordinate: [0, 0],
-      enemyCoordinates:[[22,0]],
+      enemyCoordinates: [[22, 0], [0, 22], [22, 22], [10, 10]],
       destructibleBlocks: [],
       countdown: 5,
       bombCoordinates: [],
@@ -32,20 +32,23 @@ class Main extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', (e) => { this.handleKeyPress(e) });
+    let killId = setTimeout(() => {
+      for (let i = killId; i > 0; i--) clearInterval(i);
+    }, 50);
   }
 
   // 5 second countdown, game canvas is rendered when countdown equals 0
   startTimer() {
     let interval = setInterval(() => {
       let decrement = this.state.countdown - 1;
-      this.setState({ countdown: decrement }, () => { 
+      this.setState({ countdown: decrement }, () => {
         if (this.state.countdown <= 0) {
           clearInterval(interval)
           // start AI movement
           setInterval(() => {
             this.setAiState();
-          }, 100);
-        } 
+          }, 300);
+        }
       });
     }, 1000)
   }
@@ -54,7 +57,7 @@ class Main extends React.Component {
   getBlockCoordinates() {
     let coordArr = [];
 
-    while (coordArr.length < 10) {
+    while (coordArr.length < 20) {
       // generate two random numbers within the 12 by 12 grid
       let x = Math.floor(Math.random() * 12);
       let y = Math.floor(Math.random() * 12);
@@ -62,7 +65,13 @@ class Main extends React.Component {
       // check if the generated coordinate is the same as any of the permanent blocks
       // checkForPermanentBlocks returns false if there is a permanent block at that coordinate
       let noPermanentBlocks = this.checkBlock(y * 2, x * 2);
-      if (noPermanentBlocks) coordArr.push([x, y]);
+
+      // check if the generated coordinate will trap the player
+      // return false if it the coordinate is okay
+      let playerNotTrapped = this.determineTrapped(y, x);
+
+      console.log(playerNotTrapped);
+      if (noPermanentBlocks && playerNotTrapped) coordArr.push([y, x]);
       this.setState({ destructibleBlocks: coordArr });
     }
   }
@@ -72,10 +81,20 @@ class Main extends React.Component {
   // also used to check if there is blocks in the bomb radius
   checkBlock(x, y) {
     let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks, ...this.state.bombCoordinates].every(block => {
-      // console.log(`(${x}, ${y}) : ${block[1]}, ${block[0]}`);
       return !(y / 2 === block[0] && x / 2 === block[1]);
     });
     return noBlock;
+  }
+
+  // this function is used to determine if any spawned destructible blocks will trap in a player or enemy
+  determineTrapped(y, x) {
+    const noBlockSpawns = [[0, 0], [0, 1], [0, 2], [1, 0], [2, 0], [0, 11], [0, 10], [0, 9], [1, 11], [2, 11],
+    [11, 0], [10, 0], [9, 0], [11, 1], [11, 2], [11, 11], [11, 10], [11, 9], [10, 11], [9, 11]];
+
+    // return true if it is okay to block to spawn at the coordinate passed as argument
+    return noBlockSpawns.every(coord => {
+      return !(y === coord[0] && x === coord[1]);
+    });
   }
 
   // NOTE: canvas grid starts with the top left corner as 0,0
@@ -118,7 +137,7 @@ class Main extends React.Component {
   1. remove the bomb coordinates to array
   2. call getRadius to get the bomb radius and add it to array
   3. start the timer for when bomb will explode by calling explosion
-  */  
+  */
   dropBomb() {
     let bombArr = this.state.bombCoordinates;
     // get the coordinate of the player and see if a bomb has already been dropped there
@@ -134,7 +153,7 @@ class Main extends React.Component {
 
       let radiusArr = this.state.radius;
       radiusArr.push(this.getRadius(newCoord));
-      this.setState({radius: radiusArr}, this.explosion);
+      this.setState({ radius: radiusArr }, this.explosion);
     }
   }
 
@@ -144,7 +163,7 @@ class Main extends React.Component {
   2. check for killed enemy
   3. remove any destructible blocks
   4. remove the bomb from array, remove radius from array
-  */  
+  */
   explosion() {
     let tempBombs = this.state.bombCoordinates;
     let tempRadius = this.state.radius;
@@ -159,17 +178,17 @@ class Main extends React.Component {
       this.setState({ bombCoordinates: tempBombs });
 
       tempRadius.shift();
-      this.setState({ radius: tempRadius});
+      this.setState({ radius: tempRadius });
     }, 3000);
   }
 
   // determine the radius of the bomb, filter out indestructible blocks
   getRadius(coord) {
-    let fullRadius = [[coord[0]+1, coord[1]], [coord[0]+2, coord[1]], [coord[0]-1, coord[1]], [coord[0]-2, coord[1]], [coord[0], coord[1]+1], [coord[0], coord[1]+2], [coord[0], coord[1]-1], [coord[0], coord[1]-2], [[coord[0]], coord[1]]];
+    let fullRadius = [[coord[0] + 1, coord[1]], [coord[0] + 2, coord[1]], [coord[0] - 1, coord[1]], [coord[0] - 2, coord[1]], [coord[0], coord[1] + 1], [coord[0], coord[1] + 2], [coord[0], coord[1] - 1], [coord[0], coord[1] - 2], [[coord[0]], coord[1]]];
 
     let filteredRadius = fullRadius.filter(coord => {
       return this.blockCoordinates.every(block => {
-        return !(coord[0]  === block[0] && coord[1] === block[1]);
+        return !(coord[0] === block[0] && coord[1] === block[1]);
       });
     });
     return filteredRadius;
@@ -180,9 +199,9 @@ class Main extends React.Component {
     let playerCoord = this.state.playerCoordinate;
     // if you find the player coordinate in the radius, set state gameOver to true
     let playerKilled = radiusArr.find(blockCoord => {
-      return blockCoord[1] === playerCoord[0]/2 && blockCoord[0] === playerCoord[1]/2;
+      return blockCoord[1] === playerCoord[0] / 2 && blockCoord[0] === playerCoord[1] / 2;
     }) ? true : false;
-    this.setState({gameOver: playerKilled}, () => console.log(this.state.gameOver));
+    this.setState({ gameOver: playerKilled });
   }
 
   // this function loops through the radius array and finds an enemies in the radius
@@ -192,25 +211,22 @@ class Main extends React.Component {
     let enemiesKilled = [];
     enemyCoords.forEach(enemyCoord => {
       let foundCoord = radiusArr.find(blockCoord => {
-        return blockCoord[1] === enemyCoord[0]/2 && blockCoord[0] === enemyCoord[1]/2;
+        return blockCoord[1] === enemyCoord[0] / 2 && blockCoord[0] === enemyCoord[1] / 2;
       });
-      if(foundCoord) enemiesKilled.push(foundCoord);
+      if (foundCoord) enemiesKilled.push(foundCoord);
     });
     return enemiesKilled;
   }
 
   // takes the enemies to kill array from bombKillsEnemy and removes them from the enemy coordinates array in state
   removeKilledEnemy(enemiesKilled) {
-    console.log(enemiesKilled);
     let enemyArr = this.state.enemyCoordinates;
     let filteredArr = enemyArr.filter(coord => {
       return enemiesKilled.every(block => {
-        console.log(`${coord[0]}, ${coord[1]} : ${block[0]}, ${block[1]}`);
-        return !(coord[0]  === block[1]*2 && coord[1] === block[0]*2);
+        return !(coord[0] === block[1] * 2 && coord[1] === block[0] * 2);
       });
     });
-    console.log(filteredArr);
-    this.setState({enemyCoordinates: filteredArr});
+    this.setState({ enemyCoordinates: filteredArr });
   }
 
   // determines if destructible blocks are in radius
@@ -218,7 +234,7 @@ class Main extends React.Component {
     // find the destructible blocks in the radius
     let removeArr = radiusArr.filter(coord => {
       return !this.state.destructibleBlocks.every(block => {
-        return !(coord[0]  === block[0] && coord[1] === block[1]);
+        return !(coord[0] === block[0] && coord[1] === block[1]);
       });
     });
 
@@ -226,11 +242,11 @@ class Main extends React.Component {
     let destructibleBlockArr = this.state.destructibleBlocks;
     let filteredArr = destructibleBlockArr.filter(coord => {
       return removeArr.every(block => {
-        return !(coord[0]  === block[0] && coord[1] === block[1]);
+        return !(coord[0] === block[0] && coord[1] === block[1]);
       });
     });
     // remove the blocks by setting state to filtered array 
-    this.setState({destructibleBlocks: filteredArr});
+    this.setState({ destructibleBlocks: filteredArr });
   };
 
   // event handler, moves player depending on the key pressed
@@ -252,44 +268,49 @@ class Main extends React.Component {
   }
 
   // AI Movement
-  setAiState() {
-    let newEnemyArr = this.state.enemyCoordinates.map(coords => {
-      return this.moveAI(coords);
+  checkBlock2(y, x) {
+    let noBlock = [...this.blockCoordinates, ...this.state.destructibleBlocks, ...this.state.bombCoordinates].every(block => {
+      return !(y / 2 === block[1] && x / 2 === block[0]);
     });
-    this.setState({enemyCoordinates : newEnemyArr});
+    return noBlock;
   }
 
-  moveAI(coords) {
-    let moveDirection = Math.floor(Math.random() * 3);
-    // console.log(Math.floor(Math.random() * 3));
-    // let moveDirection = 2;
-    switch(moveDirection) {
-      case 0 : return this.moveAiRight(coords);
-      case 1 : return this.moveAiLeft(coords);
-      case 2 : return this.moveAiUp(coords);
-      case 3 : return this.moveAiDown(coords);
+  setAiState() {
+    let newEnemyArr = this.state.enemyCoordinates.map(coords => {
+      return this.moveAi(coords);
+    });
+    this.setState({ enemyCoordinates: newEnemyArr });
+  }
+
+  moveAi(coords) {
+    let moveDirection = Math.floor(Math.random() * 4);
+    switch (moveDirection) {
+      case 0: return this.moveAiRight(coords);
+      case 1: return this.moveAiLeft(coords);
+      case 2: return this.moveAiUp(coords);
+      case 3: return this.moveAiDown(coords);
       default: return 0;
     }
   }
 
   moveAiRight(coords) {
     let newCoord = [coords[0] + 2, coords[1]];
-    return (newCoord[0] < 22 && this.checkBlock(newCoord[0]+2, newCoord[1])) ? newCoord : coords; 
+    return (newCoord[0] < 24 && this.checkBlock2(newCoord[0], newCoord[1])) ? newCoord : coords;
   }
 
   moveAiLeft(coords) {
     let newCoord = [coords[0] - 2, coords[1]];
-    return (newCoord[0] > 0 && this.checkBlock(newCoord[0]-2, newCoord[1])) ? newCoord : coords; 
+    return (newCoord[0] >= 0 && this.checkBlock2(newCoord[0], newCoord[1])) ? newCoord : coords;
   }
 
   moveAiUp(coords) {
     let newCoord = [coords[0], coords[1] - 2];
-    return (newCoord[1] > 0 && this.checkBlock(newCoord[0], newCoord[1]-2)) ? newCoord : coords; 
+    return (newCoord[1] >= 0 && this.checkBlock2(newCoord[0], newCoord[1])) ? newCoord : coords;
   }
 
   moveAiDown(coords) {
     let newCoord = [coords[0], coords[1] + 2];
-    return (newCoord[1] < 22 && this.checkBlock(newCoord[0], newCoord[1]+2)) ? newCoord : coords; 
+    return (newCoord[1] < 24 && this.checkBlock2(newCoord[0], newCoord[1])) ? newCoord : coords;
   }
 
   render() {

@@ -6,30 +6,40 @@ import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
 import Profile from './Profile'
 
+// class App extends React.Component {
+//   render() {
+//     return (
+//       <>
+//           <h1>new</h1>
+//           {this.props.auth0.isAuthenticated
+//             ? <LogoutButton/>
+//             : <LoginButton/>
+//           }
+//           {this.props.auth0.isAuthenticated
+//           ? <><Profile/> <Main/></> 
+//             : <h2>Please log in</h2>
+//           }
+//         </>
+//       )
+//     }
+//   }
+  
+//   // useAuth0 — is for functional components
+//   // withAuth0 — is for class components
+  
+//   let SERVER = process.env.REACT_APP_SERVER; 
+
+
+// export default withAuth0 (App);
+
 class App extends React.Component {
   render() {
-    return (
-      <>
-          <h1>new</h1>
-          {this.props.auth0.isAuthenticated
-            ? <LogoutButton/>
-            : <LoginButton/>
-          }
-          {this.props.auth0.isAuthenticated
-          ? <><Profile/> <Main/></> 
-            : <h2>Please log in</h2>
-          }
-        </>
-      )
-    }
+    return(
+      <Main/>
+    )
   }
-  
-  // useAuth0 — is for functional components
-  // withAuth0 — is for class components
-  
-  let SERVER = process.env.REACT_APP_SERVER; 
+}
 
-
-export default withAuth0 (App);
+export default Main;
 
 
