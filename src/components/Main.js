@@ -1,6 +1,7 @@
 import GameCanvas from './GameCanvas';
 import React from 'react';
 import axios from 'axios';
+import EndgameModal from '../EndgameModal';
 
 class Main extends React.Component {
   constructor(props) {
@@ -13,10 +14,24 @@ class Main extends React.Component {
       bombCoordinates: [],
       radius: [],
       gameOver: false,
-      isWinner: false,
       gameCounter: 0,
       score: 0
     }
+  }
+
+  // start a new game after the modal is closed
+  startNewGame() {
+    // this.setState({
+    //   playerCoordinate: [0, 0],
+    //   enemyCoordinates: [[22, 0], [0, 22], [22, 22], [10, 10]],
+    //   destructibleBlocks: [],
+    //   countdown: 5,
+    //   bombCoordinates: [],
+    //   radius: [],
+    //   gameOver: false,
+    //   gameCounter: 0,
+    //   score: 0
+    // }, () => this.startTimer);
   }
 
   // coordinates for the permanent orange blocks
@@ -36,6 +51,10 @@ class Main extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', (e) => { this.handleKeyPress(e) });
+    this.clearAllIntervals();
+  }
+
+  clearAllIntervals() {
     let killId = setTimeout(() => {
       for (let i = killId; i > 0; i--) clearInterval(i);
     }, 50);
@@ -61,23 +80,23 @@ class Main extends React.Component {
 
   timer() {
     let sec = 0;
-    let timer = setInterval(() => {
+    setInterval(() => {
       sec++;
-      console.log(this.state.score);
-      if (sec > 30 || this.state.gameOver) {
-        let timeBonus = 30 - sec;
-        console.log(timeBonus);
-        let totalScore = this.state.score + timeBonus;
-        clearInterval(timer);
-        this.setState({
-          score: totalScore
-        }, console.log(this.state.score));
+      let min = 0;
+      if (this.state.gameOver) {
+        let timeBonus = 500 - (min + sec);
+        let totalScore = timeBonus + this.state.score;
+        this.endGame(totalScore);
+      } else if(sec === 60) {
+        min++;
+        sec = 0;
       }
     }, 1000);
   }
 
-  endGame() {
-    
+  endGame(finalScore) {
+    this.clearAllIntervals();
+    this.setState({gameOver: true, score: finalScore}, () => console.log(this.state.score, this.state.gameOver, this.state));
   }
 
   // call the backend server, this calls a dice roll api to generate the number of random destructible blocks
@@ -237,8 +256,8 @@ class Main extends React.Component {
     let playerKilled = radiusArr.find(blockCoord => {
       return blockCoord[1] === playerCoord[0] / 2 && blockCoord[0] === playerCoord[1] / 2;
     }) ? true : false;
-    if (playerKilled) this.setState({ isWinner: false });
-    this.setState({ gameOver: playerKilled });
+    console.log(playerKilled);
+    if(playerKilled) this.endGame();
   }
 
   // this function loops through the radius array and finds an enemies in the radius
@@ -364,8 +383,9 @@ class Main extends React.Component {
   render() {
     return (
       <>
+        {console.log(this.state.gameOver)}
         {this.state.countdown > 0 && <h2>{this.state.countdown}</h2>}
-        {this.state.countdown <= 0 &&
+        {(this.state.countdown <= 0 && !this.state.gameOver) &&
           <GameCanvas
             playerCoordinate={this.state.playerCoordinate}
             blockCoordinates={this.blockCoordinates}
@@ -374,6 +394,7 @@ class Main extends React.Component {
             radius={this.state.radius}
             enemyCoordinates={this.state.enemyCoordinates}
           />}
+          <EndgameModal gameOver={this.state.gameOver} startNewGame={this.state.startNewGame}/>
       </>
     )
   }
