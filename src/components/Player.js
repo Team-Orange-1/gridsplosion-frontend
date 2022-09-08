@@ -7,24 +7,26 @@ class Player extends React.Component {
     super(props);
     this.state = {
       users: [],
-      currentUser: {}
+      currentUser: {},
+      leaders: []
     }
   }
 
   getAllUsers = async () => {
     try {
       const allUsers = await axios.get(`${process.env.REACT_APP_SERVER}/accounts`);
-      this.setState({users: allUsers.data}, () => {
+      this.setState({ users: allUsers.data }, () => {
+        this.sortByScore();
         this.setCurrentUser();
-        if(!this.state.currentUser) {
-          console.log(!this.state.currentUser)
-          // console.log('call handle create user here');
-          // this.handleCreateUser();
-        }
       });
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
+  }
+
+  sortByScore() {
+    let leaders = this.state.users.sort((previous, current) => current.highScore - previous.highScore);
+    this.setState({ leaders: leaders });
   }
 
   handleCreateUser = async () => {
@@ -35,9 +37,9 @@ class Player extends React.Component {
     try {
       let response = await axios.post(`${process.env.REACT_APP_SERVER}/account`, newUser);
       let createdUser = response.data;
-      this.setState({users: [...this.state.users, createdUser], currentUser: createdUser});
+      this.setState({ users: [...this.state.users, createdUser], currentUser: createdUser });
 
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   }
@@ -51,7 +53,7 @@ class Player extends React.Component {
       let newUsersArr = this.state.users.map(user => {
         return user._id === returnedUser._id ? returnedUser.data : user;
       });
-      this.setState({users: newUsersArr, currentUser: updateUser});
+      this.setState({ users: newUsersArr, currentUser: updateUser });
     } catch (e) {
       console.log(e);
     }
@@ -59,7 +61,7 @@ class Player extends React.Component {
 
   setCurrentUser() {
     let foundUser = this.state.users.find(user => user.email === this.props.user.email);
-    if(foundUser) this.setState({currentUser: foundUser});
+    foundUser ? this.setState({ currentUser: foundUser }) : this.handleCreateUser();
   }
 
   componentDidMount() {
@@ -68,7 +70,11 @@ class Player extends React.Component {
 
   render() {
     return (
-      <Main/>
+      <Main
+        highScore={this.state.currentUser.highScore}
+        updateScore={this.upDateScore}
+        leaders={this.state.leaders}
+      />
     );
   }
 }

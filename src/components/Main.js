@@ -52,7 +52,11 @@ class Main extends React.Component {
 
   endGame() {
     this.clearAllIntervals();
-    this.setState({gameOver: true});
+    this.setState({gameOver: true}, () => {
+      if(this.state.score > this.props.highScore) {
+        this.props.updateScore();
+      }
+    });
   }
 
   // 5 second countdown, game canvas is rendered when countdown equals 0
@@ -79,8 +83,7 @@ class Main extends React.Component {
       sec++;
       this.setState({
         score: sec
-      })
-      console.log(sec);
+      });
     }, 1000);
   }
 
