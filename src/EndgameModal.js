@@ -3,6 +3,7 @@ import { Modal, Button, ListGroup } from "react-bootstrap";
 
 class EndgameModal extends React.Component {
 
+
   winOrLose() {
     if (this.props.enemyCoordinates.length === 0) {
       console.log(this.props.enemyCoordinates);
@@ -11,6 +12,7 @@ class EndgameModal extends React.Component {
       return "Game Over! Try again?!"
     }
   }
+
 
   render() {
     return (
