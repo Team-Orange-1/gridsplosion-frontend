@@ -47,23 +47,7 @@ class Main extends React.Component {
   }
 
   startGame() {
-    console.log('clicked');
-    this.setState({
-      playerCoordinate: [0, 0],
-      enemyCoordinates: [[22, 0], [0, 22], [22, 22], [10, 10]],
-      destructibleBlocks: [],
-      countdown: 5,
-      bombCoordinates: [],
-      radius: [],
-      gameOver: false,
-      gameCounter: 0,
-      score: 0
-    }, () => {
-      document.addEventListener('keydown', (e) => { this.handleKeyPress(e) });
-      this.getBlockCoordinates();
-      this.startTimer();
-    });
-
+    document.location.reload();
   }
 
   endGame() {
