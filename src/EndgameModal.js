@@ -16,7 +16,7 @@ class EndgameModal extends React.Component {
     if (this.props.enemyCoordinates.length === 0) {
       return this.props.score + " seconds!";
     } else {
-      return '';
+      return 'Win a game to see your score!';
     }
   }
 
@@ -52,9 +52,6 @@ class EndgameModal extends React.Component {
           <Button variant="secondary" onClick={this.props.startGame}>
             Play Again
           </Button>
-        </Modal.Footer>
-        <Modal.Footer>
-          <Button variant="secondary" disabled>Leaderboards</Button>
         </Modal.Footer>
       </Modal>
     );
