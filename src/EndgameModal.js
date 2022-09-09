@@ -53,9 +53,6 @@ class EndgameModal extends React.Component {
             Play Again
           </Button>
         </Modal.Footer>
-        <Modal.Footer>
-          <Button variant="secondary" disabled>Leaderboards</Button>
-        </Modal.Footer>
       </Modal>
     );
   }
