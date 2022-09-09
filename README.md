@@ -45,9 +45,9 @@ This app replicates the style of a classic NES game called bomerman! The point i
 
 09-07-2022 10:00pm - App displays gameboard. Player movement and collisions added.
 
-09-08-2022 10:00pm - Enemy AI movement and collisions added. Startgame and endgame modals added. Bomb drop added.
+09-08-2022 9:00pm - Enemy AI movement and collisions added. Startgame and endgame modals added. Bomb drop added.
 
-09-09-2022 10:00pm - Startgame removed, endgame shows leaderboard. API adds the random destructable blocks. All collisions working!
+09-09-2022 11:00pm - Startgame removed, endgame shows leaderboard. API adds the random destructable blocks. All collisions working!
 
 <br>
 
