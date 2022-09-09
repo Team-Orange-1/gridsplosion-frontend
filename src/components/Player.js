@@ -26,7 +26,7 @@ class Player extends React.Component {
   }
 
   sortByScore() {
-    let leaders = this.state.users.sort((previous, current) => current.highScore - previous.highScore);
+    let leaders = this.state.users.sort((previous, current) => previous.highScore - current.highScore);
     if (leaders.length < 10) leaders = leaders.slice(0, 10);
     this.setState({ leaders: leaders });
   }
