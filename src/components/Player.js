@@ -1,6 +1,7 @@
 import React from 'react';
 import Main from './Main.js';
 import axios from 'axios';
+import Profile from './../Profile';
 
 class Player extends React.Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class Player extends React.Component {
 
   sortByScore() {
     let leaders = this.state.users.sort((previous, current) => previous.highScore - current.highScore);
+    if (leaders.length < 10) leaders = leaders.slice(0, 10);
     this.setState({ leaders: leaders });
   }
 
@@ -68,13 +70,28 @@ class Player extends React.Component {
     this.getAllUsers();
   }
 
+  handleDeleteUser = async() => {
+    try{
+      let url = `${process.env.REACT_APP_SERVER}/account/${this.state.currentUser._id}`;
+      await axios.delete(url);
+      let newArr = this.state.users.filter(user => user._id !== this.state.currentUser.id);
+      this.setState({users: newArr});
+    } catch(err) {
+      console.log(err);
+    }
+   
+  }
+
   render() {
     return (
-      <Main
-        highScore={this.state.currentUser.highScore}
-        updateScore={this.upDateScore}
-        leaders={this.state.leaders}
-      />
+      <>
+        <Profile handleDeleteUser={this.handleDeleteUser}/>
+        <Main
+          highScore={this.state.currentUser.highScore}
+          updateScore={this.upDateScore}
+          leaders={this.state.leaders}
+        />
+      </>
     );
   }
 }

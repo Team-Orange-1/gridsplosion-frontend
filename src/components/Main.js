@@ -244,7 +244,6 @@ class Main extends React.Component {
     let playerKilled = radiusArr.find(blockCoord => {
       return blockCoord[1] === playerCoord[0] / 2 && blockCoord[0] === playerCoord[1] / 2;
     }) ? true : false;
-    console.log(playerKilled);
     if(playerKilled) this.endGame();
   }
 
@@ -384,7 +383,11 @@ class Main extends React.Component {
             enemyCoordinates={this.state.enemyCoordinates}
           />
           </div>}
-          <EndgameModal enemyCoordinates={this.state.enemyCoordinates} gameOver={this.state.gameOver} score={this.state.score} startGame={this.startGame.bind(this)} leaders={this.props.leaders}/>
+          <EndgameModal 
+          enemyCoordinates={this.state.enemyCoordinates} 
+          gameOver={this.state.gameOver} score={this.state.score} 
+          startGame={this.startGame.bind(this)} 
+          leaders={this.props.leaders}/>
       </>
     )
   }

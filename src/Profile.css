@@ -1,0 +1,18 @@
+#profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 600px;
+  color: white;
+  background-color: grey;
+}
+
+#profile img {
+  height: 50px;
+  width: auto;
+}
+
+#profile .btn {
+  height: 50px;
+}
+
