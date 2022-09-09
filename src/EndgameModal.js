@@ -16,7 +16,7 @@ class EndgameModal extends React.Component {
     if (this.props.enemyCoordinates.length === 0) {
       return this.props.score + " seconds!";
     } else {
-      return '';
+      return 'Win a game to see your score!';
     }
   }
 
