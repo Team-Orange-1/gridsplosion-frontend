@@ -208,5 +208,9 @@ How will you communicate that it’s time to merge? In person or on Zoom.
 
 <br>
 
+Presentation: https://docs.google.com/presentation/d/1Ner1XQP8uuDIMSYFXkol_1D4Is3mxQtpaQfgydtq6Aw/edit#slide=id.g8526846ab1_1_5
+
+<br>
+
 ![Screenshot1](src/images/1.PNG "UML")
 ![Screenshot2](src/images/2.PNG "Users Stories")
