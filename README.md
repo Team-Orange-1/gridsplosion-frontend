@@ -61,51 +61,77 @@ Actual time needed to complete: 9 hrs
 
 <br>
 
-Name of feature:Game Canvas
+Name of feature: Game Canvas
+
 Estimate of time needed to complete: 2 hrs
+
 Start time: 2PM
+
 Finish time: 4PM
+
 Actual time needed to complete: 2 hrs
 
 <br>
 
 Name of feature: Detect Collisions
+
 Estimate of time needed to complete: 1 hour
+
 Start time: 3PM
+
 Finish time: 4PM
+
 Actual time needed to complete: 1 hr
 
 <br>
 
 Name of feature: Bomb Drop
+
 Estimate of time needed to complete: 30 mins
+
 Start time: 12:30
+
 Finish time: 1
+
 Actual time needed to complete: 30
 
 <br>
 
 Name of feature: Bombs kill enemies.
+
 Estimate of time needed to complete: 2 hrs.
+
 Start time: 4PM
+
 Finish time: 5PM
+
 Actual time needed to complete: 1 hour
 
 <br>
 
 Name of feature: Modal
+
 Estimate of time needed to complete: 2 hrs
+
 Start time: 4PM
+
 Finish time: 6PM
+
 Actual time needed to complete: 2
 
 <br>
 
 Name of feature: Endgame
+
 Estimate of time needed to complete: 1 hr
+
 Start time: 2:30
+
 Finish time: 3:30
+
 Actual time needed to complete: 1 hr
+
+<br>
 
 ## Credit and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
