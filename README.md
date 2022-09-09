@@ -18,7 +18,6 @@ This app replicates the style of a classic NES game called bomerman! The point i
 
 **User must take the following steps:**
 
-### Initial Local Repository Pull
 **STEP 1:** Go to the https://gridsplosion.netlify.app link, thats it! Have fun!
 
 <br>
