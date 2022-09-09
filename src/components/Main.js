@@ -146,7 +146,7 @@ class Main extends React.Component {
   // increment the player coordinate one in the x direction if it will not go outside the boundary
   moveRight() {
     let newCoordinate = [this.state.playerCoordinate[0] + 2, this.state.playerCoordinate[1]];
-    if (this.state.playerCoordinate[0] < 22 && this.checkBlock(newCoordinate[0] + 2, newCoordinate[1])) {
+    if (this.state.playerCoordinate[0] < 22 && this.checkBlock2(newCoordinate[0] + 2, newCoordinate[1])) {
       this.setState({ playerCoordinate: newCoordinate });
     }
   }
@@ -154,7 +154,7 @@ class Main extends React.Component {
   // decrement the player coordinate one in the x direction if it will not go outside the boundary
   moveLeft() {
     let newCoordinate = [this.state.playerCoordinate[0] - 2, this.state.playerCoordinate[1]];
-    if (this.state.playerCoordinate[0] > 0 && this.checkBlock(newCoordinate[0] - 2, newCoordinate[1])) {
+    if (this.state.playerCoordinate[0] > 0 && this.checkBlock2(newCoordinate[0] - 2, newCoordinate[1])) {
       this.setState({ playerCoordinate: newCoordinate });
     }
   }
@@ -162,7 +162,7 @@ class Main extends React.Component {
   // decrement the player coordinate one in the y direction if it will not go outside the boundary
   moveUp() {
     let newCoordinate = [this.state.playerCoordinate[0], this.state.playerCoordinate[1] - 2];
-    if (this.state.playerCoordinate[1] > .1 && this.checkBlock(newCoordinate[0], newCoordinate[1] - 2)) {
+    if (this.state.playerCoordinate[1] > .1 && this.checkBlock2(newCoordinate[0], newCoordinate[1] - 2)) {
       this.setState({ playerCoordinate: newCoordinate });
     }
   }
@@ -170,7 +170,7 @@ class Main extends React.Component {
   // increment the player coordinate one in the y direction if it will not go outside the boundary
   moveDown() {
     let newCoordinate = [this.state.playerCoordinate[0], this.state.playerCoordinate[1] + 2];
-    if (this.state.playerCoordinate[1] < 22 && this.checkBlock(newCoordinate[0], newCoordinate[1] + 2)) {
+    if (this.state.playerCoordinate[1] < 22 && this.checkBlock2(newCoordinate[0], newCoordinate[1] + 2)) {
       this.setState({ playerCoordinate: newCoordinate });
     }
   }
