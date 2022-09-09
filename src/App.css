@@ -3,8 +3,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-image: url("./images/Sky_back_.png");
 }
 .App {
+
   text-align: center;
 }
 

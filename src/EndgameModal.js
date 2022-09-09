@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Button, ListGroup } from "react-bootstrap";
+import './EndgameModal.css';
 
 class EndgameModal extends React.Component {
 
