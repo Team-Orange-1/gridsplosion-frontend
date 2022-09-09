@@ -37,16 +37,16 @@ class EndgameModal extends React.Component {
         <br></br>
         <Modal.Title>Leaderboards</Modal.Title>
         <ListGroup as="ol" numbered>
-          <ListGroup.Item as="li">{newArr[9]}</ListGroup.Item>
-          <ListGroup.Item as="li">{newArr[8]}</ListGroup.Item>
-          <ListGroup.Item as="li">{newArr[7]}</ListGroup.Item>
-          <ListGroup.Item as="li">{newArr[6]}</ListGroup.Item>
-          <ListGroup.Item as="li">{newArr[5]}</ListGroup.Item>
-          <ListGroup.Item as="li">{newArr[4]}</ListGroup.Item>
-          <ListGroup.Item as="li">{newArr[3]}</ListGroup.Item>
-          <ListGroup.Item as="li">{newArr[2]}</ListGroup.Item>
-          <ListGroup.Item as="li">{newArr[1]}</ListGroup.Item>
           <ListGroup.Item as="li">{newArr[0]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[1]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[2]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[3]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[4]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[5]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[6]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[7]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[8]}</ListGroup.Item>
+          <ListGroup.Item as="li">{newArr[9]}</ListGroup.Item>
         </ListGroup>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.startGame}>
