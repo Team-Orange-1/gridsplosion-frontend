@@ -51,6 +51,62 @@ This app replicates the style of a classic NES game called bomerman! The point i
 
 <br>
 
+## Times 
+
+Name of feature: Auth0 Verification
+Estimate of time needed to complete: 3 hrs
+Start time: 12 PM
+Finish time: 9PM
+Actual time needed to complete: 9 hrs
+
+<br>
+
+Name of feature:Game Canvas
+Estimate of time needed to complete: 2 hrs
+Start time: 2PM
+Finish time: 4PM
+Actual time needed to complete: 2 hrs
+
+<br>
+
+Name of feature: Detect Collisions
+Estimate of time needed to complete: 1 hour
+Start time: 3PM
+Finish time: 4PM
+Actual time needed to complete: 1 hr
+
+<br>
+
+Name of feature: Bomb Drop
+Estimate of time needed to complete: 30 mins
+Start time: 12:30
+Finish time: 1
+Actual time needed to complete: 30
+
+<br>
+
+Name of feature: Bombs kill enemies.
+Estimate of time needed to complete: 2 hrs.
+Start time: 4PM
+Finish time: 5PM
+Actual time needed to complete: 1 hour
+
+<br>
+
+Name of feature: Modal
+Estimate of time needed to complete: 2 hrs
+Start time: 4PM
+Finish time: 6PM
+Actual time needed to complete: 2
+
+<br>
+
+Name of feature: Endgame
+Estimate of time needed to complete: 1 hr
+Start time: 2:30
+Finish time: 3:30
+Actual time needed to complete: 1 hr
+
 ## Credit and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
 Examples of canvas utility and grid structures: https://www.youtube.com/watch?v=yP5DKzriqXA&t=5869s
@@ -66,10 +122,4 @@ Reference material: Previous projects done by memebers of the team, code challen
 # TEAM CODE OF CONDUCT
 
 ![Screenshot1](src/images/1.PNG "UML")
-
-<<<<<<< HEAD
 ![Screenshot2](src/images/2.PNG "Users Stories")
-=======
-![Screenshot1](src/images/1.PNG)
-![Screenshot2](src/images/2.PNG)
->>>>>>> cb2136e65d56ce1f8ffd062a7101bdbf27b14dc2
